@@ -1,85 +1,107 @@
-<template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <v-card class="logo py-4 d-flex justify-center">
-        <NuxtLogo />
-        <VuetifyLogo />
-      </v-card>
-      <v-card>
-        <v-card-title class="headline"> Welcome to poop! </v-card-title>
-        <v-card-text>
-          <p>
-            Vuetify is a progressive Material Design component framework for
-            Vue.js. It was designed to empower developers to create amazing
-            applications.
-          </p>
-          <p>
-            For more information on Vuetify, check out the
-            <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation </a
-            >.
-          </p>
-          <p>
-            If you have questions, please join the official
-            <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord </a
-            >.
-          </p>
-          <p>
-            Find a bug? Report it on the github
-            <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board </a
-            >.
-          </p>
-          <p>
-            Thank you for developing with Vuetify and I look forward to bringing
-            more exciting features in the future.
-          </p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3" />
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br />
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" nuxt to="/inspire"> Continue </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
-</template>
 
 <script>
-export default {
+import { defineComponent } from "@nuxtjs/composition-api";
+
+export default defineComponent({
   name: "IndexPage",
-};
+  components: {},
+  setup() {},
+});
 </script>
+
+<style scoped>
+.subTitle {
+  color: black;
+}
+</style>
+
+<template>
+  <v-card style="text-align: center">
+    <svg
+      version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      width="200.000000pt"
+      height="125.000000pt"
+      viewBox="0 0 200.000000 125.000000"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <metadata>
+        Created by potrace 1.10, written by Peter Selinger 2001-2011
+      </metadata>
+      <g
+        transform="translate(0.000000,125.000000) scale(0.100000,-0.100000)"
+        fill="#000000"
+        stroke="none"
+      >
+        <path
+          d="M920 1192 c-62 -23 -70 -30 -70 -58 0 -18 -5 -24 -22 -24 -13 -1 -43
+-11 -68 -23 -41 -20 -45 -25 -42 -55 3 -30 1 -32 -20 -27 -13 3 -45 -3 -73
+-14 l-50 -19 -3 -206 -2 -206 -90 0 c-53 0 -90 -4 -90 -10 0 -7 200 -10 580
+-10 365 0 580 4 580 10 0 5 -41 11 -91 12 l-91 3 1 195 c1 107 -2 200 -6 206
+-10 12 -92 44 -116 44 -12 0 -17 8 -17 29 0 25 -5 31 -37 42 -21 6 -43 16 -50
+21 -6 5 -22 8 -35 6 -20 -3 -23 1 -21 25 2 25 -4 31 -40 47 -66 28 -79 29
+-127 12z m40 -316 l0 -314 -42 2 -43 2 -3 292 -2 292 27 10 c16 6 35 14 43 19
+8 6 16 10 18 10 1 1 2 -140 2 -313z m76 288 l24 -6 0 -299 0 -298 -37 3 -38 2
+-3 308 c-2 280 -1 308 14 302 9 -3 27 -9 40 -12z m-216 -338 l0 -263 -40 1
+-40 1 0 246 0 246 38 16 c20 8 38 15 40 16 1 1 2 -118 2 -263z m30 -3 c0 -146
+-3 -263 -7 -259 -5 4 -8 124 -8 267 0 142 3 259 8 259 4 0 7 -120 7 -267z
+m250 2 c0 -170 -4 -265 -10 -265 -6 0 -10 93 -10 258 0 228 3 272 17 272 2 0
+3 -119 3 -265z m64 245 l46 -19 -2 -243 -3 -242 -42 -2 -43 -2 0 248 c0 137
+-3 255 -6 264 -8 20 -5 20 50 -4z m-487 -232 c-4 -83 -7 -179 -7 -213 l0 -62
+-40 1 -40 1 0 197 0 196 30 7 c16 4 32 11 35 16 4 5 11 9 17 9 8 0 9 -44 5
+-152z m41 -66 c1 -134 -1 -212 -7 -212 -6 0 -11 83 -13 215 -2 140 0 214 7
+212 6 -2 11 -86 13 -215z m519 -104 c-1 -62 -3 -14 -3 107 0 121 2 172 3 113
+2 -59 2 -158 0 -220z m103 93 l0 -196 -40 -1 -40 -1 0 212 0 213 40 -15 40
+-16 0 -196z"
+        />
+        <path
+          d="M94 437 c-2 -7 -3 -71 -2 -143 3 -121 4 -129 23 -129 17 0 20 8 23
+58 l3 57 67 0 68 0 -1 -57 c0 -51 2 -58 20 -58 19 0 20 8 23 134 3 139 -4 165
+-33 141 -12 -10 -16 -27 -13 -64 l3 -50 -67 -1 -68 0 0 50 c0 47 -12 75 -32
+75 -5 0 -11 -6 -14 -13z"
+        />
+        <path
+          d="M443 430 c-83 -50 -92 -174 -18 -239 65 -57 172 -35 208 42 62 129
+-73 269 -190 197z m131 -61 c37 -44 36 -101 -3 -140 -45 -45 -107 -35 -137 22
+-52 102 68 204 140 118z"
+        />
+        <path
+          d="M707 443 c-4 -3 -7 -53 -7 -111 l0 -104 34 -34 c29 -29 41 -34 79
+-34 36 0 51 6 76 29 17 16 31 37 31 48 3 149 1 196 -8 205 -23 23 -32 -5 -32
+-101 0 -111 -13 -134 -72 -134 -47 0 -58 23 -58 128 0 57 -4 95 -12 103 -14
+14 -22 15 -31 5z"
+        />
+        <path
+          d="M1025 438 c-32 -17 -45 -39 -45 -75 0 -41 30 -70 84 -78 67 -11 98
+-52 57 -75 -29 -15 -69 -12 -102 7 -23 14 -31 15 -41 4 -11 -10 -8 -17 15 -37
+22 -19 39 -24 81 -24 72 0 106 26 106 80 0 46 -29 74 -87 85 -76 14 -94 41
+-48 71 24 15 28 15 70 0 68 -26 91 -2 33 34 -36 22 -92 26 -123 8z"
+        />
+        <path
+          d="M1241 436 c-8 -9 -11 -56 -9 -142 l3 -129 84 -3 c90 -3 114 6 90 34
+-11 13 -25 15 -71 11 l-58 -5 0 42 0 42 58 -1 c50 0 57 2 57 20 0 17 -8 20
+-57 23 l-58 3 0 34 0 35 65 0 c51 0 67 4 72 16 9 25 -16 34 -93 34 -49 0 -75
+-4 -83 -14z"
+        />
+        <path
+          d="M1641 436 c-8 -9 -11 -56 -9 -142 3 -121 4 -129 23 -129 17 0 20 8
+23 58 l3 57 54 0 c58 0 75 11 54 37 -10 12 -25 14 -61 10 l-48 -6 0 39 0 40
+64 0 c65 0 88 14 63 39 -16 16 -152 14 -166 -3z"
+        />
+        <path
+          d="M1875 440 c-4 -6 -7 -71 -7 -143 0 -127 1 -132 21 -135 21 -3 22 -1
+19 139 -2 97 -7 144 -15 146 -6 2 -14 -1 -18 -7z"
+        />
+        <path
+          d="M1464 295 c-10 -26 10 -36 62 -33 41 3 49 6 49 23 0 17 -8 20 -53 23
+-41 2 -54 0 -58 -13z"
+        />
+      </g>
+    </svg>
+    <h4 class="subTitle">
+      A dataviz project focused on real estate metrics by US state.
+    </h4>
+  </v-card>
+</template>
+
+
