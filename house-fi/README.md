@@ -1,5 +1,9 @@
 # house-fi
 
+##
+-Download Node.js and install. 
+-After node is installed open a terminal and install yarn package manager `npm install --global yarn`
+
 ## Build Setup
 
 ```bash
