@@ -28,7 +28,6 @@ export default defineComponent({
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: "House-Fi",
     };
   },
 });
