@@ -19,6 +19,11 @@ export default defineComponent({
           title: "Sample",
           to: "/Sample",
         },
+        {
+          icon: "mdi-earth",
+          title: "Name",
+          to: "/Name",
+        },
       ],
       miniVariant: false,
       right: true,
