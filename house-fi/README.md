@@ -2,13 +2,19 @@
 
 ##
 -Download Node.js and install. 
+-(Assuming Windows), ensure Path env variable is properly set--Add: C:/Program Files/nodejs/ to Sytem's Path variable
 -After node is installed open a terminal and install yarn package manager `npm install --global yarn`
+-Ensure User Parth env variable is set--Add: C:\Users\[username]\AppData\Roaming\npm\ tp User's Path environmental variable
 
 ## Build Setup
 
 ```bash
-# install dependencies
-$ yarn install
+
+# Navigate to the directory the project files are
+cd C:\Path\To\Project
+ex. C:\Users\dlocarno\Documents\Development\GitHub\house-app\house-fi\
+# install dependencies from file containing dependencies
+yarn add package.json
 
 # serve with hot reload at localhost:3000
 $ yarn dev
