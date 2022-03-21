@@ -15,12 +15,12 @@ export default defineComponent({
           to: "/",
         },
         {
-          icon: "mdi-graph",
-          title: "Sample",
-          to: "/Sample",
+          icon: "mdi-earth",
+          title: "Overview",
+          to: "/United-States-Overview",
         },
         {
-          icon: "mdi-earth",
+          icon: "mdi-graph",
           title: "Name",
           to: "/Name",
         },

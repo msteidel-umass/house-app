@@ -1,13 +1,11 @@
 <script>
-import { defineComponent } from "@nuxtjs/composition-api";
+import { defineComponent, ref } from "@nuxtjs/composition-api";
 import Map from "../components/map.vue";
 
 export default defineComponent({
-  name: "Sample",
+  name: "UnitedStatesOverview",
   components: { Map },
-  setup() {
-    console.log("sample page load");
-  },
+  setup() {},
 });
 </script>
 

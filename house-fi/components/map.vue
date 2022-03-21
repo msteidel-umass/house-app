@@ -1,32 +1,39 @@
 <script>
-import { defineComponent, onMounted } from "@nuxtjs/composition-api";
+import { defineComponent, onMounted, ref } from "@nuxtjs/composition-api";
 import * as d3 from "d3";
 
 export default defineComponent({
   name: "Map",
   setup() {
     onMounted(() => {
-      console.log("Component Loaded");
+      const toolbarHeight = 161;
+      const getWidth = ref(window.innerWidth);
+      const getHeight = ref(window.innerHeight);
+
       /*  This visualization was made possible by modifying code provided by:
 
-Scott Murray, Choropleth example from "Interactive Data Visualization for the Web" 
-https://github.com/alignedleft/d3-book/blob/master/chapter_12/05_choropleth.html   
+      Scott Murray, Choropleth example from "Interactive Data Visualization for the Web" 
+      https://github.com/alignedleft/d3-book/blob/master/chapter_12/05_choropleth.html   
 		
-Malcolm Maclean, tooltips example tutorial
-http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
+      Malcolm Maclean, tooltips example tutorial
+      http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
 
-Mike Bostock, Pie Chart Legend
-http://bl.ocks.org/mbostock/3888852  */
+      Mike Bostock, Pie Chart Legend
+      http://bl.ocks.org/mbostock/3888852  */
 
       //Width and height of map
-      var width = 960;
-      var height = 500;
+      var width = getWidth.value;
+      var height = getHeight.value - toolbarHeight;
+      console.log("width");
+      console.log(width);
+      console.log("height");
+      console.log(height);
 
       // D3 Projection
       var projection = d3.geo
         .albersUsa()
         .translate([width / 2, height / 2]) // translate to center of screen
-        .scale([1000]); // scale things down so see entire US
+        .scale([1200]); // scale things down so see entire US
 
       // Define path generator
       var path = d3.geo
@@ -149,13 +156,29 @@ http://bl.ocks.org/mbostock/3888852  */
               });
           });
 
+          //Median House values Data
+          d3.csv("/median_house_values.csv", function (data) {
+            console.log("Median House Price Data:::");
+            console.log(data);
+          });
+
+          //Median Income by States Data
+          d3.csv("/median_house_values.csv", function (data) {
+            console.log("Median Income Data:::");
+            console.log(data);
+          });
+
           // Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
           var legend = d3
             .select("#map")
             .append("svg")
             .attr("class", "legend")
-            .attr("width", 140)
-            .attr("height", 200)
+            .attr("width", 100)
+            .attr("height", 100)
+            .attr(
+              "transform",
+              "translate(" + width / 4 + "," + -height / 2 + ")"
+            )
             .selectAll("g")
             .data(color.domain().slice().reverse())
             .enter()
@@ -194,7 +217,6 @@ path:hover {
 /* Style for Custom Tooltip */
 div.tooltip {
   position: absolute;
-  text-align: center;
   width: 60px;
   height: 28px;
   padding: 2px;
@@ -213,10 +235,11 @@ div.tooltip {
 /* Legend Position Style */
 .legend {
   position: absolute;
-  left: 800px;
-  top: 350px;
+  border: solid;
+  color: white;
+  background: gray;
 }
 </style>
 <template>
-  <div id="map"></div>
+  <div style="text-align: center" id="map"></div>
 </template>
