@@ -177,7 +177,7 @@ export default defineComponent({
             .attr("height", 100)
             .attr(
               "transform",
-              "translate(" + width / 4 + "," + -height / 2 + ")"
+              "translate(" + width / 3 + "," + -height / 2 + ")"
             )
             .selectAll("g")
             .data(color.domain().slice().reverse())
