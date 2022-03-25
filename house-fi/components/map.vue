@@ -1,13 +1,15 @@
 <script>
 import { defineComponent, onMounted, ref } from "@nuxtjs/composition-api";
+import Slider from "./slider.vue";
 import * as d3 from "d3";
 
 export default defineComponent({
   name: "Map",
+  components: { Slider },
   setup() {
     onMounted(() => {
-      const toolbarHeight = 161;
-      const getWidth = ref(window.innerWidth);
+      const toolbarHeight = 250;
+      const getWidth = ref(window.innerWidth / 2);
       const getHeight = ref(window.innerHeight);
 
       /*  This visualization was made possible by modifying code provided by:
@@ -175,10 +177,7 @@ export default defineComponent({
             .attr("class", "legend")
             .attr("width", 100)
             .attr("height", 100)
-            .attr(
-              "transform",
-              "translate(" + width / 3 + "," + -height / 2 + ")"
-            )
+            .attr("transform", "translate(" + 0 + "," + height / 2 + ")")
             .selectAll("g")
             .data(color.domain().slice().reverse())
             .enter()
@@ -208,6 +207,41 @@ export default defineComponent({
   },
 });
 </script>
+
+<template>
+  <div>
+    <v-row class="pa-5">
+      <v-col cols="3">
+        <v-card outlined class="menu">
+          <v-card-title>Years of Interest</v-card-title>
+          <v-card-text class="pa-3">
+            <p>Start Year:<Slider /></p>
+            <p>End Year:<Slider /></p>
+          </v-card-text>
+        </v-card>
+        <v-card outlined class="menu">
+          <v-card-title>Display</v-card-title>
+          <v-card-actions class="pl-3">
+            <div>
+              <v-btn outlined class="button"
+                ><span class="buttonText">Inflation</span></v-btn
+              >
+              <v-btn outlined class="button"
+                ><span class="buttonText">House Increase</span></v-btn
+              >
+              <v-btn outlined class="button"
+                ><span class="buttonText"> Market Health </span></v-btn
+              >
+            </div>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col>
+        <div style="text-align: center" id="map"></div>
+      </v-col>
+    </v-row>
+  </div>
+</template>
 <style type="text/css">
 /* On mouse hover, lighten state color */
 path:hover {
@@ -239,7 +273,17 @@ div.tooltip {
   color: white;
   background: gray;
 }
+.menu {
+  margin-bottom: 10px;
+  padding: 2px;
+  border: 1px;
+}
+.button {
+  margin-left: 2px;
+  height: 40px;
+  width: 32%;
+}
+.buttonText {
+  font-size: 10px;
+}
 </style>
-<template>
-  <div style="text-align: center" id="map"></div>
-</template>
