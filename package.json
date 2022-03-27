@@ -9,6 +9,9 @@
     "generate": "nuxt generate",
     "test": "jest"
   },
+  "engines" : {
+    "node" : ">=16.0.0"
+  },
   "dependencies": {
     "@nuxtjs/composition-api": "^0.32.0",
     "core-js": "^3.19.3",
