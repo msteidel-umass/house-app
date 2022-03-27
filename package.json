@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "engines" : {
-    "node" : ">=16.0.0"
+    "node" : "=16.14.0"
   },
   "dependencies": {
     "@nuxtjs/composition-api": "^0.32.0",
