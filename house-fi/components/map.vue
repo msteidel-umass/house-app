@@ -177,7 +177,10 @@ export default defineComponent({
             .attr("class", "legend")
             .attr("width", 100)
             .attr("height", 100)
-            .attr("transform", "translate(" + 0 + "," + height / 2 + ")")
+            .attr(
+              "transform",
+              "translate(" + -width / 10 + "," + height / 2 + ")"
+            )
             .selectAll("g")
             .data(color.domain().slice().reverse())
             .enter()
