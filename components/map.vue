@@ -8,203 +8,503 @@ export default defineComponent({
   components: { Slider },
   setup() {
     onMounted(() => {
-      const toolbarHeight = 250;
-      const getWidth = ref(window.innerWidth / 2);
-      const getHeight = ref(window.innerHeight);
+      // define geo json & csv file(s)
+      const US_COUNTIES = "./us_counties_geo.json";
+      const HOME_VALS = "./median_house_values.csv";
+      const INCOMES = "./median_incomes.csv";
+      // define window dim vars
+      const WIDTH = window.innerWidth;
+      const HEIGHT = window.innerHeight;
+      // const array contains html div ID names containing each map (SVG)
+      const MAP_DIVS = document.getElementsByClassName("map");
 
-      /*  This visualization was made possible by modifying code provided by:
+      // Vars used to specifcy the specific years retrieve housing/income data
+      var valueStartYear = 2020;
+      var valueEndYear = 2020;
+      var incomeStartYear = 2020;
+      var incomeEndYear = 2020;
+      var combinedStartYear = 2020;
+      var combinedEndYear = 2020;
+      // Dictionaries which will hold re-calculated (home,income,health) data values for each county
+      // These are what's used used to fill/re-color each SVG map
+      var medianValueRates = {};
+      var medianIncomeRates = {};
+      var combinedRates = {};
+      // Init vars to keep track of the actively displayed div (SVG) and corresponding map data
+      var activeMap = null;
+      var activeRateData = {};
 
-      Scott Murray, Choropleth example from "Interactive Data Visualization for the Web" 
-      https://github.com/alignedleft/d3-book/blob/master/chapter_12/05_choropleth.html   
-		
-      Malcolm Maclean, tooltips example tutorial
-      http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
+      // Load the data as a promise
+      Promise.all([
+        d3.json(US_COUNTIES),
+        d3.csv(HOME_VALS),
+        d3.csv(INCOMES),
+      ]).then((data) => {
+        // Constants to store each set of imported data after files are loaded
+        const geoJsonCounties = data[0];
+        const homeValues = data[1];
+        const incomeValues = data[2];
 
-      Mike Bostock, Pie Chart Legend
-      http://bl.ocks.org/mbostock/3888852  */
-
-      //Width and height of map
-      var width = getWidth.value;
-      var height = getHeight.value - toolbarHeight;
-      console.log("width");
-      console.log(width);
-      console.log("height");
-      console.log(height);
-
-      // D3 Projection
-      var projection = d3.geo
-        .albersUsa()
-        .translate([width / 2, height / 2]) // translate to center of screen
-        .scale([1200]); // scale things down so see entire US
-
-      // Define path generator
-      var path = d3.geo
-        .path() // path generator that will convert GeoJSON to SVG paths
-        .projection(projection); // tell path generator to use albersUsa projection
-
-      // Define linear scale for output
-      var color = d3.scale
-        .linear()
-        .range([
-          "rgb(213,222,217)",
-          "rgb(69,173,168)",
-          "rgb(84,36,55)",
-          "rgb(217,91,67)",
-        ]);
-
-      var legendText = [
-        "Cities Lived",
-        "States Lived",
-        "States Visited",
-        "Nada",
-      ];
-
-      //Create SVG element and append map to the SVG
-      var svg = d3
-        .select("#map")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height);
-
-      // Append Div for tooltip to SVG
-      var div = d3
-        .select("#map")
-        .append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
-
-      // Load in my states data!
-      d3.csv("/stateslived.csv", function (data) {
-        color.domain([0, 1, 2, 3]); // setting the range of the input data
-
-        // Load GeoJSON data and merge with states data
-        d3.json("/us-states.json", function (json) {
-          // Loop through each state data value in the .csv file
-          for (var i = 0; i < data.length; i++) {
-            // Grab State Name
-            var dataState = data[i].state;
-
-            // Grab data value
-            var dataValue = data[i].visited;
-
-            // Find the corresponding state inside the GeoJSON
-            for (var j = 0; j < json.features.length; j++) {
-              var jsonState = json.features[j].properties.name;
-
-              if (dataState == jsonState) {
-                // Copy the data value into the JSON
-                json.features[j].properties.visited = dataValue;
-
-                // Stop looking through the JSON
-                break;
-              }
+        // Initialize each dict with every county's FIPS No., to be used as an index
+        for (var key in homeValues[0]) {
+          medianValueRates[key] = null;
+          medianIncomeRates[key] = null;
+          combinedRates[key] = null;
+        }
+        // Define the D3 projection, size, and scale constants and geoPathGenerator
+        const projection = d3
+          .geoAlbers()
+          .translate([WIDTH / 2, HEIGHT / 2]) // center map
+          .scale(WIDTH); // set inital scale to screen width
+        const geoPathGen = d3.geoPath().projection(projection);
+        // Allow for D3 zooming
+        const zoom = d3
+          .zoom()
+          .scaleExtent([1, 15]) // zoom scale limits
+          .translateExtent([
+            [WIDTH * -0.5, HEIGHT * -1.5],
+            [WIDTH * 1.25, HEIGHT * 1.5],
+          ]) // pan scale limits
+          .on("zoom", handleZoom); // on a zoom event, call handleZoom
+        // each of these will update their respective map's rate data
+        const tooltip = d3.select("#tooltip");
+        // D3 coloring interpolation using previously defined coloring scale - uses D3 Red-to-Blue coloring Scheme
+        var colorInterpolator = d3.interpolateRdBu;
+        // Tool tip html.  Slightly different display of data, depending on
+        // whether or not the start and end year is the same
+        function updateToolTip(d) {
+          var toolTipData = "";
+          var rateProperty = "";
+          var numProperty = "";
+          var startYear = "";
+          var endYear = "";
+          var activeRateData = {};
+          if (activeMap == MAP_DIVS[0].id) {
+            rateProperty = "Change in Median Home Value:";
+            numProperty = "Median Home Value:";
+            startYear = valueStartYear;
+            endYear = valueEndYear;
+            activeRateData = medianValueRates;
+          } else if (activeMap == MAP_DIVS[1].id) {
+            rateProperty = "Change in Median Income:";
+            numProperty = "Median Income:";
+            startYear = incomeStartYear;
+            endYear = incomeEndYear;
+            activeRateData = medianIncomeRates;
+          } else if (activeMap == MAP_DIVS[2].id) {
+            rateProperty = "Apprx. Housing Market Inflation:";
+            startYear = combinedStartYear;
+            endYear = combinedEndYear;
+            for (var key in combinedRates) {
+              activeRateData[key] = combinedRates[key] * -1;
             }
           }
+          if (startYear == endYear) {
+            toolTipData =
+              '<div class="p">County / Municipality: ' +
+              "</div > " +
+              '<div class="v">' +
+              d.properties["NAME"] +
+              "</div>" +
+              '<div class="p">State / Territory:</div>' +
+              '<div class="v">' +
+              d.properties["STATE_NAME"] +
+              "</div>" +
+              '<div id="year">Year: ' +
+              String(startYear) +
+              "</div>" +
+              '<div class="p">' +
+              rateProperty +
+              "</div>" +
+              '<div class="v">' +
+              String(activeRateData[d.properties["GEO_ID"]].toFixed(2)) +
+              " %</div>" +
+              '<div class="p">' +
+              numProperty +
+              "</div>" +
+              '<div class="v">' +
+              "hello" +
+              "</div>";
+          } else {
+            toolTipData =
+              '<div id="property1">County / Municipality:' +
+              "</div>" +
+              '<div id="value1">' +
+              d.properties["NAME"] +
+              "</div>" +
+              '<div id="property2">State / Territory:' +
+              "</div>" +
+              '<div id="value2">' +
+              d.properties["STATE_NAME"] +
+              "</div>" +
+              '<div id="propert3y">' +
+              rateProperty +
+              "</div>" +
+              '<div id="value3">' +
+              String(activeRateData[d.properties["GEO_ID"]].toFixed(2)) +
+              " %</div>";
+          }
 
-          // Bind the data to the SVG and create one path per GeoJSON feature
-          svg
-            .selectAll("path")
-            .data(json.features)
-            .enter()
-            .append("path")
-            .attr("d", path)
-            .style("stroke", "#fff")
-            .style("stroke-width", "1")
-            .style("fill", function (d) {
-              // Get data value
-              var value = d.properties.visited;
+          return toolTipData;
+        }
 
-              if (value) {
-                //If value exists…
-                return color(value);
-              } else {
-                //If value is undefined…
-                return "rgb(213,222,217)";
-              }
-            });
-
-          // Map the cities I have lived in!
-          d3.csv("/cities-lived.csv", function (data) {
-            svg
-              .selectAll("circle")
-              .data(data)
-              .enter()
-              .append("circle")
-              .attr("cx", function (d) {
-                return projection([d.lon, d.lat])[0];
-              })
-              .attr("cy", function (d) {
-                return projection([d.lon, d.lat])[1];
-              })
-              .attr("r", function (d) {
-                return Math.sqrt(d.years) * 4;
-              })
-              .style("fill", "rgb(217,91,67)")
-              .style("opacity", 0.85)
-
-              // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks"
-              // http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
-              .on("mouseover", function (d) {
-                div.transition().duration(200).style("opacity", 0.9);
-                div
-                  .text(d.place)
-                  .style("left", d3.event.pageX + "px")
-                  .style("top", d3.event.pageY - 28 + "px");
-              })
-
-              // fade out tooltip on mouse out
-              .on("mouseout", function (d) {
-                div.transition().duration(500).style("opacity", 0);
-              });
+        // Append a SVG element to each map display div
+        var svg = d3
+          .selectAll(
+            "#" + MAP_DIVS[0].id + ",#" + MAP_DIVS[1].id + ",#" + MAP_DIVS[2].id
+          )
+          .append("svg")
+          .attr("width", "100vw")
+          .attr("height", "100vh")
+          .call(zoom);
+        // Svg grouping element constant--path elements are appended to a group
+        var g = svg.append("g");
+        // Build the SVG w/ tooltip feature
+        // Append geo data and "path" elements to construct initial map SVGs.
+        g.selectAll("path")
+          .data(geoJsonCounties.features)
+          .enter()
+          .append("path")
+          .attr("d", (d) => {
+            return geoPathGen(d);
+          })
+          .on("mouseenter", (m, d) => {
+            tooltip
+              .transition()
+              .delay(200)
+              .style("display", "grid")
+              .style("opacity", 0.9);
+            tooltip
+              .html(updateToolTip(d)) // Passes each path to updateToolTip which returns html to populate
+              .style("left", m.clientX + "px")
+              .style("top", m.clientY + "px");
+          })
+          .on("mouseleave", (m, d) => {
+            tooltip.transition().style("display", "none");
           });
 
-          //Median House values Data
-          d3.csv("/median_house_values.csv", function (data) {
-            console.log("Median House Price Data:::");
-            console.log(data);
+        // Function will update the % change in median home values between two dates for all counties
+        function calcValueRates(start, end) {
+          var rates = {};
+          var start_year_d = {};
+          var end_year_d = {};
+          // Retrieve data sets for corresponding years
+          homeValues.forEach((d) => {
+            if (d["Year"] == start) {
+              start_year_d = d;
+            }
+            if (d["Year"] == end) {
+              end_year_d = d;
+            }
           });
+          // Perform data lookups & calculate the % difference
+          for (var key in homeValues[0]) {
+            rates[key] =
+              ((end_year_d[key] - start_year_d[key]) / start_year_d[key]) * 100;
+          }
+          return rates;
+        }
 
-          //Median Income by States Data
-          d3.csv("/median_house_values.csv", function (data) {
-            console.log("Median Income Data:::");
-            console.log(data);
+        // Function will update the % change in median income between two dates for all counties
+        function calcIncomeRates(start, end) {
+          var rates = {};
+          var start_year_d = {};
+          var end_year_d = {};
+          incomeValues.forEach((d) => {
+            if (d["Year"] == start) {
+              start_year_d = d;
+            }
+            if (d["Year"] == end) {
+              end_year_d = d;
+            }
           });
+          for (var key in incomeValues[0]) {
+            rates[key] =
+              ((end_year_d[key] - start_year_d[key]) / start_year_d[key]) * 100;
+          }
+          console.log("Income:", rates);
+          return rates;
+        }
 
-          // Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
-          var legend = d3
-            .select("#map")
-            .append("svg")
-            .attr("class", "legend")
-            .attr("width", 100)
-            .attr("height", 100)
-            .attr(
-              "transform",
-              "translate(" + -width / 10 + "," + height / 2 + ")"
-            )
-            .selectAll("g")
-            .data(color.domain().slice().reverse())
-            .enter()
-            .append("g")
-            .attr("transform", function (d, i) {
-              return "translate(0," + i * 20 + ")";
-            });
+        // Function will determine the housing market health between two dates by
+        // comparing change over time of median home price-to-income ratios for all counties
+        function calcCombinedRates(start, end) {
+          var startValue_d = null;
+          var endValue_d = null;
+          var startIncome_d = null;
+          var endIncome_d = null;
+          var rates = {};
+          // Get both median home value and median income data for both years for all counties
+          homeValues.forEach((d) => {
+            if (d["Year"] == start) {
+              startValue_d = d;
+            }
+            if (d["Year"] == end) {
+              endValue_d = d;
+            }
+          });
+          incomeValues.forEach((d) => {
+            if (d["Year"] == start) {
+              startIncome_d = d;
+            }
+            if (d["Year"] == end) {
+              endIncome_d = d;
+            }
+          });
+          // Caluclate the initial and the final homeprice-to-income ratio's for all counties
+          var p2i_initial = {};
+          var p2i_final = {};
+          for (var key in startValue_d) {
+            p2i_initial[key] = startValue_d[key] / startIncome_d[key];
+          }
+          for (var key in endValue_d) {
+            p2i_final[key] = endValue_d[key] / endIncome_d[key];
+          }
+          // Calculate the overall housing market inflation rates between the timeframe
+          for (var key in p2i_initial) {
+            rates[key] =
+              ((p2i_final[key] - p2i_initial[key]) / p2i_initial[key]) * 100;
+          }
+          return rates;
+        }
 
-          legend
-            .append("rect")
-            .attr("width", 18)
-            .attr("height", 18)
-            .style("fill", color);
+        function dataUpdateHandler(start, end) {
+          if (activeMap == MAP_DIVS[0].id) {
+            valueStartYear = start;
+            valueEndYear = end;
+            medianValueRates = calcValueRates(start, end);
+            updateMap(medianValueRates);
+          } else if (activeMap == MAP_DIVS[1].id) {
+            incomeStartYear = start;
+            incomeEndYear = end;
+            medianIncomeRates = calcIncomeRates(start, end);
+            updateMap(medianIncomeRates);
+          } else if (activeMap == MAP_DIVS[2].id) {
+            console.log("ran");
+            combinedStartYear = start;
+            combinedEndYear = end;
+            combinedRates = calcCombinedRates(start, end);
+            updateMap(combinedRates);
+          }
+        }
 
-          legend
-            .append("text")
-            .data(legendText)
-            .attr("x", 24)
-            .attr("y", 9)
-            .attr("dy", ".35em")
-            .text(function (d) {
+        // Function updates global start & end year vars (set by range slider cntrls)
+        // Then makes a call to updateMap(), which makes calls to updateData and colorMap
+        function changeYears(start, end) {
+          dataUpdateHandler(start, end);
+        }
+        // colorMap, will first make a call to the updateDataHandler to refresh the data it needs to re-color
+        function updateMap(rateData) {
+          // Take extent of new data range
+          var extent = d3.extent(Object.values(rateData));
+          console.log(extent);
+          // Update coloring scale based on the new data
+          var sorted = Object.values(rateData).sort(d3.ascending);
+          sorted.map((d) => {
+            return d.toFixed(2);
+          });
+          console.log(sorted);
+          let scale = d3
+            .scaleDiverging()
+            .domain([extent[0], 0, extent[1]], (d) => {
+              //a min to max scale with '0' value is nuetral
               return d;
             });
-        });
+          // Color the map
+          colorMap(scale, rateData);
+        }
+
+        function colorMap(scale, rateData) {
+          console.log("Coloring");
+          // Color (fill) the map
+          d3.selectAll("#" + activeMap + " path").attr("fill", (d) => {
+            for (var key in rateData) {
+              if (d.properties["GEO_ID"] == key) {
+                //console.log(d.properties["NAME"] + ": " + rateData[key]);
+                return colorInterpolator(scale(rateData[key]));
+              }
+            }
+          });
+        }
+
+        function handleZoom(e) {
+          d3.select("#" + activeMap + " svg g").attr("transform", e.transform);
+        }
+
+        // USER INTERFACE CONTROL FUNCTION DEFINITIONS:
+
+        // Define toggle map btn controls--changes the 'active' map div
+        function toggleMap(divName) {
+          if (divName == MAP_DIVS[0].id && activeMap != MAP_DIVS[0].id) {
+            document.getElementById(MAP_DIVS[0].id).style.display = "initial";
+            document.getElementById(MAP_DIVS[1].id).style.display = "none";
+            document.getElementById(MAP_DIVS[2].id).style.display = "none";
+            activeMap = MAP_DIVS[0].id;
+            setSliderDates(valueStartYear, valueEndYear);
+          } else if (divName == MAP_DIVS[1].id && activeMap != MAP_DIVS[1].id) {
+            document.getElementById(MAP_DIVS[0].id).style.display = "none";
+            document.getElementById(MAP_DIVS[1].id).style.display = "initial";
+            document.getElementById(MAP_DIVS[2].id).style.display = "none";
+            activeMap = MAP_DIVS[1].id;
+            setSliderDates(incomeStartYear, incomeEndYear);
+          } else if (divName == MAP_DIVS[2].id && activeMap != MAP_DIVS[2].id) {
+            document.getElementById(MAP_DIVS[0].id).style.display = "none";
+            document.getElementById(MAP_DIVS[1].id).style.display = "none";
+            document.getElementById(MAP_DIVS[2].id).style.display = "initial";
+            activeMap = MAP_DIVS[2].id;
+            setSliderDates(combinedStartYear, combinedEndYear);
+          }
+          // Function calls to change style of active toggle button and re-color active map
+          styleActiveToggleBtn();
+        }
+
+        // Get toggle btns and assign them to array, then restyle their colors
+        function styleActiveToggleBtn() {
+          var btns = Array.from(document.getElementsByClassName("toggle_btn"));
+          btns.forEach((b) => {
+            if (b.value == activeMap) {
+              b.style.backgroundColor = "steelblue";
+              b.style.borderColor = "steelblue";
+            } else {
+              b.style.backgroundColor = "cornflowerblue";
+              b.style.borderColor = "cornflowerblue";
+            }
+          });
+        }
+
+        // Define function to create toggle map btns
+        function createToggleBtn(
+          parentDiv,
+          divControlled,
+          btnText,
+          toggleFunc
+        ) {
+          var btn = document.createElement("button");
+          btn.classList.add("toggle_btn");
+          btn.innerText = btnText;
+          btn.value = divControlled;
+          btn.onclick = function () {
+            toggleFunc(divControlled);
+          };
+          document.getElementById(parentDiv).appendChild(btn);
+          return btn;
+        }
+
+        // Create the map display toggle btns
+        let toggleValueBtn = createToggleBtn(
+          "control_overlay",
+          "home_values",
+          "Change in Home Values",
+          toggleMap
+        );
+        let toggleIncomeBtn = createToggleBtn(
+          "control_overlay",
+          "incomes",
+          "Change in Incomes",
+          toggleMap
+        );
+        let toggleCombinedBtn = createToggleBtn(
+          "control_overlay",
+          "combined",
+          "Housing Market Health",
+          toggleMap
+        );
+
+        // Define function to create Date range slider control input
+        function dualSliderInput(div, min, max, changeYears) {
+          // Create single dual-input range slider made of two normal sliders
+          var s1 = document.createElement("input");
+          var s2 = document.createElement("input");
+          s1.classList.add("range_slider");
+          s2.classList.add("range_slider");
+          s1.name = "s1";
+          s2.name = "s2";
+          s1.type = s2.type = "range";
+          s1.min = s2.min = min;
+          s1.max = s2.max = max;
+          s1.step = s2.step = 1;
+          // Create text display divs to append their input text to
+          var t1 = document.createElement("div");
+          var t2 = document.createElement("div");
+          t1.classList.add("text_box");
+          t2.classList.add("text_box");
+          t1.id = "t1";
+          t2.id = "t2";
+          // Add functionality to sliders
+          s1.onmouseup = function () {
+            changeYears(s1.value, s2.value);
+          };
+          s2.onmouseup = function () {
+            changeYears(s1.value, s2.value);
+          };
+          // append everything to the parent (control) div in the right order
+          document.getElementById(div).appendChild(t1);
+          document.getElementById(div).appendChild(s2);
+          document.getElementById(div).appendChild(s1);
+          document.getElementById(div).appendChild(t2);
+          return [s1, s2, t1, t2];
+        }
+
+        // Additional slider control logic--
+        // Repositions sliders during a page toggle &
+        // ensures both sliders control as a single dual slider
+        function controlSlider(start = null, end = null) {
+          var s1 = document.getElementsByName("s1")[0];
+          var s2 = document.getElementsByName("s2")[0];
+          // If arguments were provided, overide controls and set sliders to arguments
+          if (start != null && end != null) {
+            s1.value = start;
+            s2.value = end;
+          }
+          // Else control using dual-slider control logic
+          else if (s2.value > s1.value) {
+            s1.style.display = "initial";
+            s2.style.display = "initial";
+          } else if (this == s2 && s2.value < s1.value) {
+            s1.value = s2.value;
+            s1.style.display = "none";
+          } else if (this == s1 && s1.value > s2.value) {
+            s2.value = s1.value;
+            s2.style.display = "none";
+          }
+          // update the slider text box divs to display the years
+          updateTextBox(s1.value, s2.value);
+        }
+
+        // Updates the date slider's text boxes with their input value
+        function updateTextBox(value1, value2) {
+          let textBox1 = document.getElementById("t1");
+          let textBox2 = document.getElementById("t2");
+          textBox1.innerHTML = value1;
+          textBox2.innerHTML = value2;
+        }
+
+        // Passes slider values as arguments to to controlSlider Func
+        function setSliderDates(start, end) {
+          controlSlider(start, end);
+        }
+
+        // Create the date input range-sliders
+        let dateSlider = dualSliderInput(
+          "control_overlay",
+          2010,
+          2020,
+          changeYears
+        );
+        // Add event listeners & their associated control logic
+        dateSlider[0].addEventListener("input", controlSlider);
+        dateSlider[1].addEventListener("input", controlSlider);
+
+        // Init the page upon initial load
+        function initPage(startYearDefault, endYearDefault) {
+          for (var i = 0; i < Object.keys(MAP_DIVS).length; i++) {
+            toggleMap(MAP_DIVS[i].id);
+            dataUpdateHandler(startYearDefault, endYearDefault);
+          }
+          toggleMap(MAP_DIVS[0].id);
+        }
+        // Init default pages with 2020 as start and end year
+        initPage(2020, 2020);
       });
     });
   },
@@ -213,6 +513,7 @@ export default defineComponent({
 
 <template>
   <div>
+    <!--
     <v-row class="pa-5">
       <v-col cols="3">
         <v-card outlined class="menu">
@@ -240,53 +541,195 @@ export default defineComponent({
         </v-card>
       </v-col>
       <v-col>
-        <div style="text-align: center" id="map"></div>
+        <div id="control_overlay"></div>
+        <div id="tooltip"></div>
+        <div id="home_values" class="map"></div>
+        <div id="incomes" class="map"></div>
+        <div id="combined" class="map"></div>
       </v-col>
     </v-row>
+    -->
+    <v-container>
+      <div id="control_overlay"></div>
+      <div id="tooltip"></div>
+      <div id="home_values" class="map"></div>
+      <div id="incomes" class="map"></div>
+      <div id="combined" class="map"></div>
+    </v-container>
   </div>
 </template>
 <style type="text/css">
-/* On mouse hover, lighten state color */
-path:hover {
-  fill-opacity: 0.7;
+/* CSS Reset for all browsers (prevents buggy padding) */
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
 }
 
-/* Style for Custom Tooltip */
-div.tooltip {
+/*---BODY STYLING---*/
+/*-------------------------------*/
+body {
+  background-color: aliceblue;
+}
+
+/*---D3:SVG STYLING---*/
+/*-------------------------------*/
+div path {
+  stroke-width: 0.3px;
+  stroke: black;
+  /* fill: none; --THIS WILL OVERRIDE D3 SVG "fill" ATTR COLORING*/
+}
+
+div path:hover {
+  fill-opacity: 0.8;
+  stroke-width: 2.5px;
+  stroke: white;
+}
+
+/*---CONTROL OVERLAY STYLING---*/
+/*-------------------------------*/
+div#control_overlay {
+  margin: 0 auto;
+  background-color: rgba(0, 0, 0, 0.65);
+  width: 100%;
+  position: fixed;
+  top: 250;
+  left: 0;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/*---TOGGLE BUTTONS STYLING---*/
+/*----------------------------*/
+
+div#control_overlay button {
+  color: black;
+  font-family: "Gill Sans";
+  font-size: 20px;
+  text-align: center;
+  font-weight: bold;
+  background-color: aliceblue;
+  border: 5px outset cornflowerblue;
+  border-radius: 10px;
+  outline: 1px solid cornflowerblue;
+  width: 225px;
+  margin-left: 2%;
+  padding: 5px;
+}
+
+div#control_overlay button:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1);
+}
+
+/*  click affect */
+div#control_overlay button:active {
+  box-shadow: 4px #667;
+  transform: translateY(2px);
+  opacity: 0.9;
+}
+
+/*---DATE-RANGE SLIDER STYLING---*/
+/*-------------------------------*/
+.range_slider {
+  -webkit-appearance: none;
+  width: 16%;
+  background: aliceblue;
+  border: 5px outset cornflowerblue;
   position: absolute;
-  width: 60px;
-  height: 28px;
-  padding: 2px;
-  font: 12px sans-serif;
-  background: white;
-  border: 0px;
-  border-radius: 8px;
+  top: 25%;
   pointer-events: none;
+  border-radius: 10px;
 }
 
-/* Legend Font Style */
-#map {
-  font: 11px sans-serif;
+.range_slider::-webkit-slider-runnable-track {
+  height: 15px;
+  z-index: 1;
 }
 
-/* Legend Position Style */
-.legend {
+.range_slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  z-index: 2;
+  height: 30px;
+  width: 30px;
+  border: 2px solid steelblue;
+  border-radius: 15px;
+  background: cornflowerblue;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.range_slider::-webkit-slider-thumb:hover {
+  background-color: cornflowerblue;
+  box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 1);
+}
+
+.range_slider::-webkit-slider-thumb:active {
+  background-color: steelblue;
+  box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 1);
+}
+
+.text_box {
+  width: fit-content;
+  background-color: aliceblue;
+  color: black;
+  font-family: "Gill Sans";
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  padding: 4px 8px 4px 8px;
+  margin-right: 2%;
+  margin-left: 2%;
+  border: 5px solid cornflowerblue;
+  border-style: outset;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+#t2 {
+  margin-left: 18%;
+}
+
+#tooltip {
+  z-index: 3;
+  width: fit-content;
   position: absolute;
-  border: solid;
-  color: white;
-  background: gray;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  background: cornflowerblue;
+  font-family: sans-serif;
+  font-size: 100%;
+  border: 5px outset steelblue;
+  border-radius: 15px;
+  line-height: 1;
+  top: 0;
+  left: 0;
+  pointer-events: none; /* prevents tooltip from fluttering */
+  display: none;
+  grid-template-columns: repeat(8 / 1fr);
+  grid-template-rows: auto;
 }
-.menu {
-  margin-bottom: 10px;
-  padding: 2px;
-  border: 1px;
+
+#tooltip .p {
+  font-weight: bold;
+  grid-column: 1 / span 6;
+  padding: 2px 0px 2px 0px;
 }
-.button {
-  margin-left: 2px;
-  height: 40px;
-  width: 32%;
+
+#tooltip .v {
+  margin-left: 10px;
+  grid-column: 7 / span 2;
+  padding: 2px 0px 2px 0px;
 }
-.buttonText {
-  font-size: 10px;
+
+#tooltip #year {
+  font-weight: bold;
+  border-bottom: 2px solid black;
+  grid-column: 4 / span 2;
+  padding-top: 2px;
 }
 </style>

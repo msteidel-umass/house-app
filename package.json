@@ -16,7 +16,7 @@
   "dependencies": {
     "@nuxtjs/composition-api": "^0.32.0",
     "core-js": "^3.19.3",
-    "d3": "^3.0.0",
+    "d3": "^7.1.1",
     "nuxt": "^2.15.8",
     "package.json": "^2.0.1",
     "vue": "^2.6.14",

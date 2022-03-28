@@ -17,7 +17,7 @@ export default defineComponent({
         {
           icon: "mdi-earth",
           title: "Overview",
-          to: "/United-States-Overview",
+          to: "/united-states-overview",
         },
         {
           icon: "mdi-graph",
@@ -95,5 +95,3 @@ export default defineComponent({
     </v-footer>
   </v-app>
 </template>
-
-
