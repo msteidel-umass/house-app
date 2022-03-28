@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
-    "heroku-postbuild": "yarn install && yarn generate && yarn start",
+    "heroku-postbuild": "yarn build",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "test": "jest"
