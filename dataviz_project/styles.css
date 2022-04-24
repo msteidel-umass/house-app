@@ -1,0 +1,173 @@
+/* CSS Reset for all browsers (prevents buggy padding) */
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+/*---BODY STYLING---*/
+/*-------------------------------*/
+body {
+    background-color: aliceblue;
+}
+
+/*---D3:SVG STYLING---*/
+/*-------------------------------*/
+div path {
+    stroke-width: .3px;
+    stroke: black;
+    /* fill: none; --THIS WILL OVERRIDE D3 SVG "fill" ATTR COLORING*/
+}
+
+div path:hover {
+    fill-opacity: .8;
+    stroke-width: 2.5px;
+    stroke: white; 
+}
+
+/*---CONTROL OVERLAY STYLING---*/
+/*-------------------------------*/
+div#control_overlay {
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.65);
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+/*---TOGGLE BUTTONS STYLING---*/
+/*----------------------------*/
+
+div#control_overlay button {
+    color: black;
+    font-family:'Gill Sans';
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+    background-color: aliceblue;
+    border: 5px outset cornflowerblue;
+    border-radius: 10px;
+    outline: 1px solid cornflowerblue;
+    width: 225px;
+    margin-left: 2%;
+    padding: 5px
+}
+
+div#control_overlay button:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 1);
+}
+
+/*  click affect */
+div#control_overlay button:active {
+    box-shadow: 4px #667;
+    transform: translateY(2px);
+    opacity: .9;
+}
+
+/*---DATE-RANGE SLIDER STYLING---*/
+/*-------------------------------*/
+.range_slider {
+    -webkit-appearance: none;
+    width: 16%;
+    background: aliceblue;
+    border: 5px outset cornflowerblue;
+    position: absolute;
+    top: 25%;
+    pointer-events: none;
+    border-radius: 10px;
+  }
+  
+  .range_slider::-webkit-slider-runnable-track {
+    height: 15px;
+    z-index: 1;
+  }
+  
+  .range_slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    z-index: 2;
+    height: 30px;
+    width: 30px;
+    border: 2px solid steelblue;
+    border-radius: 15px;
+    background: cornflowerblue;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .range_slider::-webkit-slider-thumb:hover {
+    background-color: cornflowerblue;
+    box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 1);
+  }
+
+  .range_slider::-webkit-slider-thumb:active {
+    background-color: steelblue;
+    box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 1);
+  }
+
+  .text_box {
+      width: fit-content;
+      background-color: aliceblue;
+      color: black;
+      font-family:'Gill Sans';
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      padding: 4px 8px 4px 8px;
+      margin-right: 2%;
+      margin-left: 2%;
+      border: 5px solid cornflowerblue;
+      border-style: outset;
+      border-radius: 10px;
+      display: inline-block;
+  }
+
+  #t2 {
+      margin-left: 18%;
+  }
+  
+  #tooltip {
+    z-index: 3;
+    width: fit-content;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    background: cornflowerblue;
+    font-family: sans-serif;
+    font-size: 100%;
+    border: 5px outset steelblue;
+    border-radius: 15px;
+    line-height: 1; 
+    top: 0;
+    left: 0;
+    pointer-events: none;   /* prevents tooltip from fluttering */
+    display: none;
+    grid-template-columns: repeat(8 / 1fr);
+    grid-template-rows: auto;
+}
+
+#tooltip .p {
+    font-weight: bold;
+    grid-column: 1 / span 6;
+    padding: 2px 0px 2px 0px;
+}
+
+#tooltip .v {
+    margin-left: 10px;
+    grid-column: 7 / span 2;
+    padding: 2px 0px 2px 0px;
+}
+
+#tooltip #year {
+    font-weight: bold;
+    border-bottom: 2px solid black;
+    grid-column: 4 / span 2;
+    padding-top: 2px;
+}

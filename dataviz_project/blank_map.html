@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./libs/d3.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <!-- <script src="./libs/topojson.v3.js"></script> -->
+    <title>US Counties</title>
+</head>
+
+<style>
+    path {
+        stroke-width: 1px;
+        stroke: black;
+        fill: none;
+    }
+</style>
+
+<script>
+    // define geo json file(s)
+    const US_MAP = "./data/us_geo.json"
+    const US_COUNTIES = "./data/us_counties_geo.json"
+    const US_TOWNS = "./data/towns.topojson"
+    // define csv data
+    const HOME_VALS = "./data/median_house_values.csv"
+    const INCOMES = "./data/median_incomes.csv"
+
+    const WINDOW_DIMS = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
+    const MARGIN = WINDOW_DIMS.width * .15
+
+    Promise.all([
+        d3.json(US_MAP),
+        d3.json(US_COUNTIES),
+        d3.json(US_TOWNS),
+        d3.csv(HOME_VALS),
+        d3.csv(INCOMES)
+    ]).then(data => {
+        var geoJsonCounties = data[1];
+
+        // Define projection, size, and scale
+        var projection = d3.geoAlbers()
+            .fitSize([WINDOW_DIMS.width - MARGIN, WINDOW_DIMS.height - MARGIN], geoJsonCounties)
+            .scale(WINDOW_DIMS.width);
+
+        var geoPathGen = d3.geoPath().projection(projection);
+
+        // Append a SVG element to body, then append a path for the boundaries
+        let svg = d3.select("#map").append("svg")
+            .attr("width", "100vw")
+            .attr("height", "100vh");
+        // Append geo data and "path" elements to SVG.
+        svg.selectAll("path")
+            .data(geoJsonCounties.features)
+            .enter()
+            .append("path")
+            .attr("d", (d) => {
+                return geoPathGen(d);
+            })
+    });
+
+</script>
+
+<body>
+    <div id="map"></div>
+</body>
+
+</html>
