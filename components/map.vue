@@ -597,9 +597,9 @@ div#control_overlay {
   background-color: rgba(0, 0, 0, 0.65);
   width: 100%;
   position: fixed;
-  top: 250;
+  top: 0;
   left: 0;
-  padding-top: 6px;
+  padding-top: 200px;
   padding-bottom: 6px;
 }
 
