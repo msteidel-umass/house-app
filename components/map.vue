@@ -1,38 +1,129 @@
 <script>
-import { defineComponent, onMounted, ref } from "@nuxtjs/composition-api";
-import Slider from "./slider.vue";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  ref,
+} from "@nuxtjs/composition-api";
+import loadSpinner from "@/components/load_spinner.vue";
 import * as d3 from "d3";
 
 export default defineComponent({
   name: "Map",
-  components: { Slider },
+  components: { loadSpinner },
   setup() {
-    onMounted(() => {
-      // define geo json & csv file(s)
-      const US_COUNTIES = "./us_counties_geo.json";
-      const HOME_VALS = "./median_house_values.csv";
-      const INCOMES = "./median_incomes.csv";
-      // define window dim vars
-      const WIDTH = window.innerWidth;
-      const HEIGHT = window.innerHeight;
-      // const array contains html div ID names containing each map (SVG)
-      const MAP_DIVS = document.getElementsByClassName("map");
+    // const array contains html div ID names containing each map (SVG)
+    const MAP_DIVS = document.getElementsByClassName("map");
+    // Init vars to keep track of the actively displayed div (SVG) and corresponding map data
+    var activeMap = null;
+    // Vars used to specifcy the specific years retrieve housing/income data
+    var valueStartYear = 2020;
+    var valueEndYear = 2020;
+    var incomeStartYear = 2020;
+    var incomeEndYear = 2020;
+    var combinedStartYear = 2020;
+    var combinedEndYear = 2020;
+    // Dictionaries which will hold re-calculated (home,income,health) data values for each county
+    // These are what's used used to fill/re-color each SVG map
+    var medianValueRates = {};
+    var medianIncomeRates = {};
+    var combinedRates = {};
+    var activeRateData = {};
 
-      // Vars used to specifcy the specific years retrieve housing/income data
-      var valueStartYear = 2020;
-      var valueEndYear = 2020;
-      var incomeStartYear = 2020;
-      var incomeEndYear = 2020;
-      var combinedStartYear = 2020;
-      var combinedEndYear = 2020;
-      // Dictionaries which will hold re-calculated (home,income,health) data values for each county
-      // These are what's used used to fill/re-color each SVG map
-      var medianValueRates = {};
-      var medianIncomeRates = {};
-      var combinedRates = {};
-      // Init vars to keep track of the actively displayed div (SVG) and corresponding map data
-      var activeMap = null;
-      var activeRateData = {};
+    // define geo json & csv file(s)
+    const US_COUNTIES = "./us_counties_geo.json";
+    const HOME_VALS = "./median_house_values.csv";
+    const INCOMES = "./median_incomes.csv";
+    let showSpinner = ref(true);
+    let showHideSpinner = computed(() => {
+      return showSpinner.value;
+    });
+    onMounted(() => {
+      drawMap();
+    });
+
+    // Define toggle map btn controls--changes the 'active' map div
+    function toggleMap(divName) {
+      if (divName == MAP_DIVS[0].id && activeMap != MAP_DIVS[0].id) {
+        document.getElementById(MAP_DIVS[0].id).style.display = "initial";
+        document.getElementById(MAP_DIVS[1].id).style.display = "none";
+        document.getElementById(MAP_DIVS[2].id).style.display = "none";
+        activeMap = MAP_DIVS[0].id;
+        setSliderDates(valueStartYear, valueEndYear);
+      } else if (divName == MAP_DIVS[1].id && activeMap != MAP_DIVS[1].id) {
+        document.getElementById(MAP_DIVS[0].id).style.display = "none";
+        document.getElementById(MAP_DIVS[1].id).style.display = "initial";
+        document.getElementById(MAP_DIVS[2].id).style.display = "none";
+        activeMap = MAP_DIVS[1].id;
+        setSliderDates(incomeStartYear, incomeEndYear);
+      } else if (divName == MAP_DIVS[2].id && activeMap != MAP_DIVS[2].id) {
+        document.getElementById(MAP_DIVS[0].id).style.display = "none";
+        document.getElementById(MAP_DIVS[1].id).style.display = "none";
+        document.getElementById(MAP_DIVS[2].id).style.display = "initial";
+        activeMap = MAP_DIVS[2].id;
+        setSliderDates(combinedStartYear, combinedEndYear);
+      }
+      // Function calls to change style of active toggle button and re-color active map
+      styleActiveToggleBtn();
+    }
+
+    // Passes slider values as arguments to to controlSlider Func
+    function setSliderDates(start, end) {
+      controlSlider(start, end);
+    }
+
+    // Additional slider control logic--
+    // Repositions sliders during a page toggle &
+    // ensures both sliders control as a single dual slider
+    function controlSlider(start = null, end = null) {
+      var s1 = document.getElementsByName("s1")[0];
+      var s2 = document.getElementsByName("s2")[0];
+      // If arguments were provided, overide controls and set sliders to arguments
+      if (start != null && end != null) {
+        s1.value = start;
+        s2.value = end;
+      }
+      // Else control using dual-slider control logic
+      else if (s2.value > s1.value) {
+        s1.style.display = "initial";
+        s2.style.display = "initial";
+      } else if (this == s2 && s2.value < s1.value) {
+        s1.value = s2.value;
+        s1.style.display = "none";
+      } else if (this == s1 && s1.value > s2.value) {
+        s2.value = s1.value;
+        s2.style.display = "none";
+      }
+      // update the slider text box divs to display the years
+      updateTextBox(s1.value, s2.value);
+    }
+
+    // Updates the date slider's text boxes with their input value
+    function updateTextBox(value1, value2) {
+      let textBox1 = document.getElementById("t1");
+      let textBox2 = document.getElementById("t2");
+      textBox1.innerHTML = value1;
+      textBox2.innerHTML = value2;
+    }
+    // Get toggle btns and assign them to array, then restyle their colors
+    function styleActiveToggleBtn() {
+      var btns = Array.from(document.getElementsByClassName("toggle_btn"));
+      btns.forEach((b) => {
+        if (b.value == activeMap) {
+          b.style.backgroundColor = "steelblue";
+          b.style.borderColor = "steelblue";
+        } else {
+          b.style.backgroundColor = "cornflowerblue";
+          b.style.borderColor = "cornflowerblue";
+        }
+      });
+    }
+
+    //Draw map
+    function drawMap() {
+      // define window dim vars
+      const WIDTH = document.getElementById("d3-map").clientWidth;
+      const HEIGHT = document.getElementById("d3-map").clientHeight;
 
       // Load the data as a promise
       Promise.all([
@@ -54,7 +145,7 @@ export default defineComponent({
         // Define the D3 projection, size, and scale constants and geoPathGenerator
         const projection = d3
           .geoAlbers()
-          .translate([WIDTH / 2, HEIGHT / 2]) // center map
+          .translate([WIDTH / 2, HEIGHT]) // center map
           .scale(WIDTH); // set inital scale to screen width
         const geoPathGen = d3.geoPath().projection(projection);
         // Allow for D3 zooming
@@ -154,8 +245,8 @@ export default defineComponent({
             "#" + MAP_DIVS[0].id + ",#" + MAP_DIVS[1].id + ",#" + MAP_DIVS[2].id
           )
           .append("svg")
-          .attr("width", "100vw")
-          .attr("height", "100vh")
+          .attr("width", WIDTH)
+          .attr("height", HEIGHT * 2)
           .call(zoom);
         // Svg grouping element constant--path elements are appended to a group
         var g = svg.append("g");
@@ -324,6 +415,8 @@ export default defineComponent({
                 return colorInterpolator(scale(rateData[key]));
               }
             }
+            //loading screen
+            showSpinner.value = false;
           });
         }
 
@@ -332,45 +425,6 @@ export default defineComponent({
         }
 
         // USER INTERFACE CONTROL FUNCTION DEFINITIONS:
-
-        // Define toggle map btn controls--changes the 'active' map div
-        function toggleMap(divName) {
-          if (divName == MAP_DIVS[0].id && activeMap != MAP_DIVS[0].id) {
-            document.getElementById(MAP_DIVS[0].id).style.display = "initial";
-            document.getElementById(MAP_DIVS[1].id).style.display = "none";
-            document.getElementById(MAP_DIVS[2].id).style.display = "none";
-            activeMap = MAP_DIVS[0].id;
-            setSliderDates(valueStartYear, valueEndYear);
-          } else if (divName == MAP_DIVS[1].id && activeMap != MAP_DIVS[1].id) {
-            document.getElementById(MAP_DIVS[0].id).style.display = "none";
-            document.getElementById(MAP_DIVS[1].id).style.display = "initial";
-            document.getElementById(MAP_DIVS[2].id).style.display = "none";
-            activeMap = MAP_DIVS[1].id;
-            setSliderDates(incomeStartYear, incomeEndYear);
-          } else if (divName == MAP_DIVS[2].id && activeMap != MAP_DIVS[2].id) {
-            document.getElementById(MAP_DIVS[0].id).style.display = "none";
-            document.getElementById(MAP_DIVS[1].id).style.display = "none";
-            document.getElementById(MAP_DIVS[2].id).style.display = "initial";
-            activeMap = MAP_DIVS[2].id;
-            setSliderDates(combinedStartYear, combinedEndYear);
-          }
-          // Function calls to change style of active toggle button and re-color active map
-          styleActiveToggleBtn();
-        }
-
-        // Get toggle btns and assign them to array, then restyle their colors
-        function styleActiveToggleBtn() {
-          var btns = Array.from(document.getElementsByClassName("toggle_btn"));
-          btns.forEach((b) => {
-            if (b.value == activeMap) {
-              b.style.backgroundColor = "steelblue";
-              b.style.borderColor = "steelblue";
-            } else {
-              b.style.backgroundColor = "cornflowerblue";
-              b.style.borderColor = "cornflowerblue";
-            }
-          });
-        }
 
         // Define function to create toggle map btns
         function createToggleBtn(
@@ -391,7 +445,9 @@ export default defineComponent({
         }
 
         // Create the map display toggle btns
-        let toggleValueBtn = createToggleBtn(
+        //using v-btn for toggle
+
+        /* let toggleValueBtn = createToggleBtn(
           "control_overlay",
           "home_values",
           "Change in Home Values",
@@ -409,6 +465,7 @@ export default defineComponent({
           "Housing Market Health",
           toggleMap
         );
+        */
 
         // Define function to create Date range slider control input
         function dualSliderInput(div, min, max, changeYears) {
@@ -445,45 +502,6 @@ export default defineComponent({
           return [s1, s2, t1, t2];
         }
 
-        // Additional slider control logic--
-        // Repositions sliders during a page toggle &
-        // ensures both sliders control as a single dual slider
-        function controlSlider(start = null, end = null) {
-          var s1 = document.getElementsByName("s1")[0];
-          var s2 = document.getElementsByName("s2")[0];
-          // If arguments were provided, overide controls and set sliders to arguments
-          if (start != null && end != null) {
-            s1.value = start;
-            s2.value = end;
-          }
-          // Else control using dual-slider control logic
-          else if (s2.value > s1.value) {
-            s1.style.display = "initial";
-            s2.style.display = "initial";
-          } else if (this == s2 && s2.value < s1.value) {
-            s1.value = s2.value;
-            s1.style.display = "none";
-          } else if (this == s1 && s1.value > s2.value) {
-            s2.value = s1.value;
-            s2.style.display = "none";
-          }
-          // update the slider text box divs to display the years
-          updateTextBox(s1.value, s2.value);
-        }
-
-        // Updates the date slider's text boxes with their input value
-        function updateTextBox(value1, value2) {
-          let textBox1 = document.getElementById("t1");
-          let textBox2 = document.getElementById("t2");
-          textBox1.innerHTML = value1;
-          textBox2.innerHTML = value2;
-        }
-
-        // Passes slider values as arguments to to controlSlider Func
-        function setSliderDates(start, end) {
-          controlSlider(start, end);
-        }
-
         // Create the date input range-sliders
         let dateSlider = dualSliderInput(
           "control_overlay",
@@ -506,78 +524,67 @@ export default defineComponent({
         // Init default pages with 2020 as start and end year
         initPage(2020, 2020);
       });
-    });
+    }
+    return {
+      drawMap,
+      toggleMap,
+      showHideSpinner,
+    };
   },
 });
 </script>
 
 <template>
   <div>
-    <!--
     <v-row class="pa-5">
       <v-col cols="3">
         <v-card outlined class="menu">
           <v-card-title>Years of Interest</v-card-title>
           <v-card-text class="pa-3">
-            <p>Start Year:<Slider /></p>
-            <p>End Year:<Slider /></p>
+            <div id="control_overlay"></div>
           </v-card-text>
         </v-card>
         <v-card outlined class="menu">
           <v-card-title>Display</v-card-title>
           <v-card-actions class="pl-3">
             <div>
-              <v-btn outlined class="button"
-                ><span class="buttonText">Inflation</span></v-btn
+              <v-btn outlined class="button" @click="toggleMap('incomes')">
+                <span class="buttonText">Incomes</span></v-btn
               >
-              <v-btn outlined class="button"
-                ><span class="buttonText">House Increase</span></v-btn
+              <v-btn outlined class="button" @click="toggleMap('home_values')"
+                ><span class="buttonText">House Prices</span></v-btn
               >
-              <v-btn outlined class="button"
+              <v-btn outlined class="button" @click="toggleMap('combined')"
                 ><span class="buttonText"> Market Health </span></v-btn
               >
             </div>
           </v-card-actions>
         </v-card>
       </v-col>
-      <v-col>
-        <div id="control_overlay"></div>
+      <v-col id="d3-map" cols="6">
+        <v-container id="container">
+          <load-spinner v-if="showHideSpinner" />
+          <div id="home_values" class="map"></div>
+          <div id="incomes" class="map"></div>
+          <div id="combined" class="map"></div>
+        </v-container>
         <div id="tooltip"></div>
-        <div id="home_values" class="map"></div>
-        <div id="incomes" class="map"></div>
-        <div id="combined" class="map"></div>
       </v-col>
     </v-row>
-    -->
-    <v-container>
-      <div id="control_overlay"></div>
-      <div id="tooltip"></div>
-      <div id="home_values" class="map"></div>
-      <div id="incomes" class="map"></div>
-      <div id="combined" class="map"></div>
-    </v-container>
   </div>
 </template>
 <style type="text/css">
-/* CSS Reset for all browsers (prevents buggy padding) */
-* {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  font-size: 100%;
-  vertical-align: baseline;
-  background: transparent;
+#container {
+  position: relative;
 }
 
-/*---BODY STYLING---*/
-/*-------------------------------*/
-body {
-  background-color: aliceblue;
+.buttonText {
+  font-family: "Questrial";
+  font-size: 11px;
 }
-
 /*---D3:SVG STYLING---*/
 /*-------------------------------*/
+
 div path {
   stroke-width: 0.3px;
   stroke: black;
@@ -593,13 +600,10 @@ div path:hover {
 /*---CONTROL OVERLAY STYLING---*/
 /*-------------------------------*/
 div#control_overlay {
-  margin: 0 auto;
-  background-color: rgba(0, 0, 0, 0.65);
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding-top: 200px;
+  width: 100vh;
+  height: 100%;
+  position: relative;
+
   padding-bottom: 6px;
 }
 
@@ -613,9 +617,9 @@ div#control_overlay button {
   text-align: center;
   font-weight: bold;
   background-color: aliceblue;
-  border: 5px outset cornflowerblue;
+  border: 5px outset white;
   border-radius: 10px;
-  outline: 1px solid cornflowerblue;
+  outline: 1px solid white;
   width: 225px;
   margin-left: 2%;
   padding: 5px;
@@ -636,11 +640,11 @@ div#control_overlay button:active {
 /*-------------------------------*/
 .range_slider {
   -webkit-appearance: none;
-  width: 16%;
-  background: aliceblue;
-  border: 5px outset cornflowerblue;
+  width: 18%;
+  background: transparent;
+  border: 2px outset white;
   position: absolute;
-  top: 25%;
+  top: 20%;
   pointer-events: none;
   border-radius: 10px;
 }
@@ -652,38 +656,35 @@ div#control_overlay button:active {
 
 .range_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  z-index: 2;
-  height: 30px;
-  width: 30px;
-  border: 2px solid steelblue;
+  z-index: 3;
+  height: 15px;
+  width: 15px;
+  border: 2px solid white;
   border-radius: 15px;
-  background: cornflowerblue;
+  background: gray;
   cursor: pointer;
   pointer-events: auto;
 }
 
 .range_slider::-webkit-slider-thumb:hover {
-  background-color: cornflowerblue;
+  background-color: white;
   box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 1);
 }
 
 .range_slider::-webkit-slider-thumb:active {
-  background-color: steelblue;
+  background-color: white;
   box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 1);
 }
 
 .text_box {
-  width: fit-content;
-  background-color: aliceblue;
-  color: black;
-  font-family: "Gill Sans";
-  font-size: 20px;
+  width: 10%;
+  background-color: transparent;
+  color: white;
+  font-size: 13px;
   font-weight: bold;
   text-align: center;
-  padding: 4px 8px 4px 8px;
-  margin-right: 2%;
-  margin-left: 2%;
-  border: 5px solid cornflowerblue;
+  font-family: "Questrial";
+  border: 2px solid white;
   border-style: outset;
   border-radius: 10px;
   display: inline-block;
@@ -703,7 +704,7 @@ div#control_overlay button:active {
   background: cornflowerblue;
   font-family: sans-serif;
   font-size: 100%;
-  border: 5px outset steelblue;
+  border: 5px outset gray;
   border-radius: 15px;
   line-height: 1;
   top: 0;
