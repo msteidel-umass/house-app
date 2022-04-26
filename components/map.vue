@@ -152,10 +152,6 @@ export default defineComponent({
         const zoom = d3
           .zoom()
           .scaleExtent([1, 15]) // zoom scale limits
-          .translateExtent([
-            [WIDTH * -0.5, HEIGHT * -1.5],
-            [WIDTH * 1.25, HEIGHT * 1.5],
-          ]) // pan scale limits
           .on("zoom", handleZoom); // on a zoom event, call handleZoom
         // each of these will update their respective map's rate data
         const tooltip = d3.select("#tooltip");
