@@ -537,16 +537,16 @@ export default defineComponent({
 <template>
   <div>
     <v-row class="pa-5">
-      <v-col cols="3">
+      <v-col cols="4">
         <v-card outlined class="menu">
-          <v-card-title>Years of Interest</v-card-title>
+          <v-card-title class="card-title">Years of Interest</v-card-title>
           <v-container class="container">
             <div id="control_overlay"></div>
           </v-container>
           <v-card-text class="pa-3"> </v-card-text>
         </v-card>
         <v-card outlined class="menu">
-          <v-card-title>Display</v-card-title>
+          <v-card-title class="card-title">Display</v-card-title>
           <div class="pa-3" style="text-align: center">
             <v-btn outlined class="button" @click="toggleMap('incomes')">
               <span class="buttonText">Incomes</span></v-btn
@@ -578,8 +578,11 @@ export default defineComponent({
 }
 
 .buttonText {
-  font-family: "Questrial";
-  font-size: 11px;
+  font-family: "Gill Sans";
+  font-size: 12px;
+}
+.card-title {
+  font-family: "Gill Sans";
 }
 /*---D3:SVG STYLING---*/
 /*-------------------------------*/
@@ -681,10 +684,10 @@ div#control_overlay button:active {
   position: relative;
   background-color: transparent;
   color: white;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: bold;
   text-align: center;
-  font-family: "Questrial";
+  font-family: "Gill Sans";
   border: 2px solid white;
   border-style: outset;
   border-radius: 10px;
@@ -696,10 +699,10 @@ div#control_overlay button:active {
   position: relative;
   background-color: transparent;
   color: white;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: bold;
   text-align: center;
-  font-family: "Questrial";
+  font-family: "Gill Sans";
   border: 2px solid white;
   border-style: outset;
   border-radius: 10px;
@@ -721,7 +724,7 @@ div#control_overlay button:active {
   font-family: sans-serif;
   font-size: 100%;
   border: 5px outset gray;
-  border-radius: 15px;
+  border-radius: 11px;
   line-height: 1;
   top: 0;
   left: 0;
