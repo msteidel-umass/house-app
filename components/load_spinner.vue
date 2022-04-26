@@ -1,57 +1,28 @@
 <template>
-  <div class="splash-screen" style="text-align: center">
-    <div class="spinner-wrapper">
-      <div class="spinner">Loading Map</div>
-    </div>
+  <div>
+    <span class="loader"></span>
   </div>
 </template>
 
 <style scoped>
-.splash-screen {
-  background: transparent;
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  z-index: 50;
+.loader {
+  top: 100px;
+  width: 100px;
+  height: 100px;
+  border: 5px solid #fff;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  position: absolute;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
 }
 
-.spinner-wrapper {
-  position: relative;
-  left: 25%;
-
-  transform: translate(-50%, -50%);
-}
-.spinner {
-  padding-top: 15px;
-  width: 80px;
-  height: 80px;
-  margin: 100px auto;
-  background-color: #e45447;
-
-  border-radius: 100%;
-  -webkit-animation: sk-scaleout 2s infinite ease-in-out;
-  animation: sk-scaleout 2s infinite ease-in-out;
-}
-
-@-webkit-keyframes sk-scaleout {
+@keyframes rotation {
   0% {
-    -webkit-transform: scale(0);
+    transform: rotate(0deg);
   }
   100% {
-    -webkit-transform: scale(1);
-    opacity: 0;
-  }
-}
-
-@keyframes sk-scaleout {
-  0% {
-    -webkit-transform: scale(0);
-    transform: scale(0);
-  }
-  100% {
-    -webkit-transform: scale(1);
-    transform: scale(1);
-    opacity: 0;
+    transform: rotate(360deg);
   }
 }
 </style>

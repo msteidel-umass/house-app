@@ -556,7 +556,7 @@ export default defineComponent({
           </div>
         </v-card>
       </v-col>
-      <v-col id="d3-map" cols="6">
+      <v-col style="text-align: center" id="d3-map" cols="6">
         <v-container class="container">
           <load-spinner v-if="showHideSpinner" />
           <div id="home_values" class="map"></div>
