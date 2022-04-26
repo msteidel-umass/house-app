@@ -483,8 +483,8 @@ export default defineComponent({
           // Create text display divs to append their input text to
           var t1 = document.createElement("div");
           var t2 = document.createElement("div");
-          t1.classList.add("text_box");
-          t2.classList.add("text_box");
+          t1.classList.add("text_box1");
+          t2.classList.add("text_box2");
           t1.id = "t1";
           t2.id = "t2";
           // Add functionality to sliders
@@ -540,29 +540,28 @@ export default defineComponent({
       <v-col cols="3">
         <v-card outlined class="menu">
           <v-card-title>Years of Interest</v-card-title>
-          <v-card-text class="pa-3">
+          <v-container class="container">
             <div id="control_overlay"></div>
-          </v-card-text>
+          </v-container>
+          <v-card-text class="pa-3"> </v-card-text>
         </v-card>
         <v-card outlined class="menu">
           <v-card-title>Display</v-card-title>
-          <v-card-actions class="pl-3">
-            <div>
-              <v-btn outlined class="button" @click="toggleMap('incomes')">
-                <span class="buttonText">Incomes</span></v-btn
-              >
-              <v-btn outlined class="button" @click="toggleMap('home_values')"
-                ><span class="buttonText">House Prices</span></v-btn
-              >
-              <v-btn outlined class="button" @click="toggleMap('combined')"
-                ><span class="buttonText"> Market Health </span></v-btn
-              >
-            </div>
-          </v-card-actions>
+          <div class="pa-3" style="text-align: center">
+            <v-btn outlined class="button" @click="toggleMap('incomes')">
+              <span class="buttonText">Incomes</span></v-btn
+            >
+            <v-btn outlined class="button" @click="toggleMap('home_values')"
+              ><span class="buttonText">House Prices</span></v-btn
+            >
+            <v-btn outlined class="button" @click="toggleMap('combined')"
+              ><span class="buttonText"> Market Health </span></v-btn
+            >
+          </div>
         </v-card>
       </v-col>
       <v-col id="d3-map" cols="6">
-        <v-container id="container">
+        <v-container class="container">
           <load-spinner v-if="showHideSpinner" />
           <div id="home_values" class="map"></div>
           <div id="incomes" class="map"></div>
@@ -574,7 +573,7 @@ export default defineComponent({
   </div>
 </template>
 <style type="text/css">
-#container {
+.container {
   position: relative;
 }
 
@@ -600,11 +599,10 @@ div path:hover {
 /*---CONTROL OVERLAY STYLING---*/
 /*-------------------------------*/
 div#control_overlay {
-  width: 100vh;
-  height: 100%;
+  width: 100%;
   position: relative;
-
-  padding-bottom: 6px;
+  text-align: center;
+  padding: 5px;
 }
 
 /*---TOGGLE BUTTONS STYLING---*/
@@ -640,11 +638,12 @@ div#control_overlay button:active {
 /*-------------------------------*/
 .range_slider {
   -webkit-appearance: none;
-  width: 18%;
+  width: 80%;
   background: transparent;
   border: 2px outset white;
   position: absolute;
-  top: 20%;
+  top: 25%;
+  left: 10%;
   pointer-events: none;
   border-radius: 10px;
 }
@@ -676,11 +675,28 @@ div#control_overlay button:active {
   box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 1);
 }
 
-.text_box {
+.text_box1 {
   width: 10%;
+  right: 32%;
+  position: relative;
   background-color: transparent;
   color: white;
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+  font-family: "Questrial";
+  border: 2px solid white;
+  border-style: outset;
+  border-radius: 10px;
+  display: inline-block;
+}
+.text_box2 {
+  width: 10%;
+  left: 32%;
+  position: relative;
+  background-color: transparent;
+  color: white;
+  font-size: 15px;
   font-weight: bold;
   text-align: center;
   font-family: "Questrial";
