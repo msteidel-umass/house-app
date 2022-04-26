@@ -1,20 +1,17 @@
 # house-fi
 
 ##
--Download Node.js and install. 
+
+-Download Node.js and install.
 -(Assuming Windows), ensure Path env variable is properly set--Add: C:/Program Files/nodejs/ to Sytem's Path variable
 -After node is installed open a terminal and install yarn package manager `npm install --global yarn`
--Ensure User Parth env variable is set--Add: C:\Users\[username]\AppData\Roaming\npm\ tp User's Path environmental variable
+-Ensure User Path env variable is set--Add: C:\Users\[username]\AppData\Roaming\npm\ to User's Path environmental variable
 
 ## Build Setup
 
 ```bash
-
-# Navigate to the directory the project files are
-cd C:\Path\To\Project
-ex. C:\Users\dlocarno\Documents\Development\GitHub\house-app\house-fi\
 # install dependencies from file containing dependencies
-yarn add package.json
+yarn install
 
 # serve with hot reload at localhost:3000
 $ yarn dev
@@ -50,7 +47,6 @@ More information about the usage of this directory in [the documentation](https:
 Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
 
 More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
-
 
 ### `pages`
 
