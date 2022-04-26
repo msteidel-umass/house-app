@@ -1,0 +1,1 @@
+House-Fi is a US housing market visualization project, which aggregates and filters median household income and median home price data from 2010-2020 by US county.  The visualization tool enables the user to derive an overall market health of the housing market for each US county through a comparison of the datasets.
