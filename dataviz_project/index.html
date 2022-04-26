@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--University of Massachusetts Dartmouth-->
+<!--CIS-568 Data Visualization, Spring 2022-->
+<!--Dave Locarno, Pat Lee, Michael Steidel-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--import D3 lib dependencies-->
+    <script src="./libs/d3.js"></script>
+    <!--import js source code-->
+    <script src="./src_js/svg_funct.js"></script>
+    <script src="./src_js/data_calcs.js"></script>
+    <script src="./src_js/ui_toggle_btn.js"></script>
+    <script src="./src_js/ui_range_slider.js"></script>
+    <script src="./src_js/ui_tooltip.js"></script>
+    <!--external style-sheet-->
+    <link rel="stylesheet" href="./styles/style.css">
+</head>
+
+<body>
+    <div id="control_overlay"></div>
+    <div id="tooltip"></div>
+    <div id="legend"></div>
+    <div id="home_values" class="map"></div>
+    <div id="incomes" class="map"></div>
+    <div id="combined" class="map"></div>
+</body>
+
+<script>
+    // DEFINE ALL VARS:
+
+    // Define geo json & csv file(s)
+    const US_COUNTIES = "./data/us_counties_geo.json"
+    const HOME_VALS = "./data/median_house_values.csv"
+    const INCOMES = "./data/median_incomes.csv"
+    // Define window dim vars
+    const WIDTH = window.innerWidth;
+    const HEIGHT = window.innerHeight;
+    // Array contains html ID names corresponding to each div containing a map (SVG)
+    const MAP_DIVS = document.getElementsByClassName("map");
+
+    // Vars used to specifcy the specific years retrieve housing/income data for each page
+    var valueStartYear = null;
+    var valueEndYear = null;
+    var incomeStartYear = null;
+    var incomeEndYear = null;
+    var combinedStartYear = null;
+    var combinedEndYear = null;
+    // Init vars to keep track of the actively displayed div (SVG) and corresponding map data
+    var activeMap = null;
+    var activeRateData = {};
+    // Dics to hold median home value and median income value data
+    let homeValues = {}
+    let incomeValues = {}
+    // Dictionaries which will hold re-calculated (home,income,health) data values for each county
+    // These are what's used used to fill/re-color each SVG map
+    var medianValueRates = {};
+    var medianIncomeRates = {};
+    var combinedRates = {};
+
+    // LOAD ALL DATA:
+
+    Promise.all([
+        d3.json(US_COUNTIES),
+        d3.csv(HOME_VALS),
+        d3.csv(INCOMES),
+    ]).then(data => {
+        // Init vars with data
+        geoJsonCounties = data[0];
+        homeValues = data[1];
+        incomeValues = data[2];
+        // Initialize each dict with every county's FIPS No., to be used as an index
+        for (var key in homeValues[0]) {
+            medianValueRates[key] = null;
+            medianIncomeRates[key] = null;
+            combinedRates[key] = null;
+        }
+
+        // CONSTRUCT D3 SVG:
+
+        // Define the D3 projection, size, and geoPathGenerator
+        const projection = d3.geoAlbers()
+            .translate([WIDTH / 2, HEIGHT / 2]) // center map
+            .scale(WIDTH);                      // set inital scale to screen width
+        const geoPathGen = d3.geoPath().projection(projection);
+        // Allow for D3 zooming
+        const zoom = d3.zoom()
+            .scaleExtent([1, 15])                                                            // zoom scale limits
+            .translateExtent([[WIDTH * -.5, HEIGHT * -1.5], [WIDTH * 1.25, HEIGHT * 1.5]]) // pan scale limits
+            .on('zoom', handleZoom);                                                        // on a zoom event, call handleZoom
+        // tooltip will update their respective map's rate data
+        const tooltip = d3.select("#tooltip");
+        // D3 coloring interpolation using previously defined coloring scale - uses D3 Red-to-Blue coloring Scheme
+        var colorInterpolator = d3.interpolateRdBu;
+        // Append a SVG element to each map display div
+        var svg = d3.selectAll("#" + MAP_DIVS[0].id + ",#" + MAP_DIVS[1].id + ",#" + MAP_DIVS[2].id).append("svg")
+            .attr("width", "100vw")
+            .attr("height", "100vh")
+            .call(zoom)
+        // Svg grouping element constant--path elements are appended to a group
+        var g = svg.append("g");
+
+        // Construct the SVG--append GEO data to "path" elements
+        g.selectAll("path")
+            .data(geoJsonCounties.features)
+            .enter()
+            .append("path")
+            .attr("d", (d) => { return geoPathGen(d); })
+            .on("mouseenter", (m, d) => {
+                tooltip.transition()
+                    .delay(200)
+                    .style("display", "grid")       // show tooltip (container is styled as grid-type display)
+                    .style("opacity", .9)
+                tooltip.html(updateToolTip(d))       // Passes each path to updateToolTip func which return's tooltip's corresponding inner html
+                    .style("left", m.clientX + "px")
+                    .style("top", m.clientY + "px");
+            })
+            .on("mouseleave", (m, d) => {
+                tooltip.transition()
+                    .style("display", "none")       // hide tooltip displau
+            })
+
+        // DATA / UPDATING VISUALISATION HANDLING:
+
+        // This function determines what data calculation functions to call
+        // based on the 'active' map that's displayed.  And, then makes a 
+        // call to updateMap.  It reads/writes to globally-scoped vars in index.html
+        function dataUpdateHandler(start, end) {
+            if (activeMap == MAP_DIVS[0].id) {
+                valueStartYear = start;
+                valueEndYear = end;
+                medianValueRates = calcValueRates(start, end, homeValues);
+                updateMap(medianValueRates)
+            }
+            else if (activeMap == MAP_DIVS[1].id) {
+                incomeStartYear = start;
+                incomeEndYear = end;
+                medianIncomeRates = calcIncomeRates(start, end, incomeValues);
+                updateMap(medianIncomeRates);
+            }
+            else if (activeMap == MAP_DIVS[2].id) {
+                combinedStartYear = start;
+                combinedEndYear = end;
+                combinedRates = calcCombinedRates(start, end, homeValues, incomeValues);
+                updateMap(combinedRates);
+            }
+        }
+
+        // CREATE / INITIALIZE ALL UI CONTROLS:
+
+        // Create the map display toggle btns
+        let toggleValueBtn = createToggleBtn("control_overlay", "home_values", "Change in Home Values", toggleMap);
+        let toggleIncomeBtn = createToggleBtn("control_overlay", "incomes", "Change in Incomes", toggleMap);
+        let toggleCombinedBtn = createToggleBtn("control_overlay", "combined", "Housing Market Health", toggleMap);
+
+        // Create the date input range-sliders, add event listeners, & associated control-logic
+        let dateSlider = dualSliderInput("control_overlay", 2010, 2020, dataUpdateHandler);
+        dateSlider[0].addEventListener("input", controlSlider);
+        dateSlider[1].addEventListener("input", controlSlider);
+
+        // INIT THE PAGE:
+
+        // Inits the web-page upon its initial load w/default (hard-coded) date values
+        function __init__(startYearDefault, endYearDefault) {
+            for (var i = 0; i < Object.keys(MAP_DIVS).length; i++) {
+                toggleMap(MAP_DIVS[i].id);
+                dataUpdateHandler(startYearDefault, endYearDefault);
+            }
+            toggleMap(MAP_DIVS[0].id);
+        }
+        __init__(2020, 2020)
+    });
+
+</script>
+
+</html>
