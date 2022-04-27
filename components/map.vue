@@ -69,6 +69,8 @@
           <div id="incomes" class="map"></div>
           <div id="combined" class="map"></div>
         </v-container>
+      </v-col>
+      <v-col>
         <div id="tooltip"></div>
       </v-col>
     </v-row>
@@ -621,7 +623,7 @@ export default defineComponent({
               .style("opacity", 0.9);
             tooltip
               .html(updateToolTip(d)) // Passes each path to updateToolTip func which return's tooltip's corresponding inner html
-              .style("left", m.clientX + "px")
+              .style("left", m.clientX - WIDTH / 2 + "px")
               .style("top", m.clientY + "px");
           })
           .on("mouseleave", (m, d) => {
@@ -850,8 +852,6 @@ div#control_overlay button:active {
   border: 5px outset steelblue;
   border-radius: 15px;
   line-height: 1;
-  top: 0;
-  left: 0;
   pointer-events: none;
   /* prevents tooltip from fluttering */
   display: none;
