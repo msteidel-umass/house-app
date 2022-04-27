@@ -568,7 +568,7 @@ export default defineComponent({
     </v-row>
   </div>
 </template>
-<style type="text/css">
+<style scoped type="text/css">
 .container {
   position: relative;
 }

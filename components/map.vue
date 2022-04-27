@@ -697,6 +697,16 @@ export default defineComponent({
 });
 </script>
 <style type="text/css">
+/* CSS Reset for all browsers (prevents buggy padding) */
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
 .container {
   position: relative;
 }
@@ -749,14 +759,14 @@ div#control_overlay {
 
 div#control_overlay button {
   color: black;
-  font-family: "sans-serif";
+  font-family: "Gill Sans";
   font-size: 20px;
   text-align: center;
   font-weight: bold;
   background-color: aliceblue;
-  border: 5px outset cornflowerblue;
+  border: 5px outset white;
   border-radius: 10px;
-  outline: 1px solid cornflowerblue;
+  outline: 1px solid white;
   width: 225px;
   margin-left: 2%;
   padding: 5px;
@@ -777,11 +787,12 @@ div#control_overlay button:active {
 /*-------------------------------*/
 .range_slider {
   -webkit-appearance: none;
-  width: 16%;
-  background: aliceblue;
-  border: 5px outset cornflowerblue;
+  width: 80%;
+  background: transparent;
+  border: 2px outset white;
   position: absolute;
   top: 25%;
+  left: 10%;
   pointer-events: none;
   border-radius: 10px;
 }
@@ -793,23 +804,23 @@ div#control_overlay button:active {
 
 .range_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  z-index: 2;
-  height: 30px;
-  width: 30px;
-  border: 2px solid steelblue;
+  z-index: 3;
+  height: 15px;
+  width: 15px;
+  border: 2px solid white;
   border-radius: 15px;
-  background: cornflowerblue;
+  background: gray;
   cursor: pointer;
   pointer-events: auto;
 }
 
 .range_slider::-webkit-slider-thumb:hover {
-  background-color: cornflowerblue;
+  background-color: white;
   box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 1);
 }
 
 .range_slider::-webkit-slider-thumb:active {
-  background-color: steelblue;
+  background-color: white;
   box-shadow: 0px 4px 8px 0 rgba(0, 0, 0, 1);
 }
 
