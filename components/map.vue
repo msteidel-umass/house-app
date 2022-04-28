@@ -91,9 +91,9 @@ export default defineComponent({
   components: { loadSpinner },
   setup() {
     // Define geo json & csv file(s)
-    const US_COUNTIES = "./us_counties_geo.json";
-    const HOME_VALS = "./median_house_values.csv";
-    const INCOMES = "./median_incomes.csv";
+    const US_COUNTIES = "/us_counties_geo.json";
+    const HOME_VALS = "/median_house_values.csv";
+    const INCOMES = "/median_incomes.csv";
     // Array contains html ID names corresponding to each div containing a map (SVG)
     const MAP_DIVS = document.getElementsByClassName("map");
 
