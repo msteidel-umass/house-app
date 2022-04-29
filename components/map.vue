@@ -197,8 +197,8 @@ export default defineComponent({
         attr2 = "Home Value Increase";
       } else if (activeMap == MAP_DIVS[1].id) {
         title = "% Change in Median Income";
-        attr1 = "Income Increase";
-        attr2 = "Income Decrease";
+        attr1 = "Income Decrease";
+        attr2 = "Income Increase";
       } else if (activeMap == MAP_DIVS[2].id) {
         title = "% Market Inflation";
         attr1 = "Market Over-valued";
