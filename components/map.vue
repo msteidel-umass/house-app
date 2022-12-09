@@ -4,7 +4,6 @@
       <v-col cols="4">
         <v-card outlined class="menu">
           <div class="card-title">Adjust Years of Interest</div>
-
           <v-row class="pa-3" style="text-align: center">
             <v-col cols="3">
               <div id="t1" class="text_box"></div>
@@ -16,6 +15,12 @@
               <div id="t2" class="text_box ma-0"></div>
             </v-col>
           </v-row>
+        </v-card>
+        <v-card outlined class="menu">
+          <div class="card-title">State</div>
+          <div class="pa-3" style="text-align: center">
+            <v-select :options ="states"></v-select>
+          </div>
         </v-card>
         <v-card outlined class="menu">
           <div class="card-title">Display</div>
@@ -84,6 +89,7 @@ import {
   ref,
 } from "@nuxtjs/composition-api";
 import loadSpinner from "@/components/load_spinner.vue";
+import vselect from "@/components/select.vue";
 import * as d3 from "d3";
 
 export default defineComponent({
