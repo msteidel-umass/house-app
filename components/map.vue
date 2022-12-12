@@ -97,7 +97,7 @@ export default defineComponent({
   components: { loadSpinner },
   setup() {
     // Define geo json & csv file(s)
-    const US_COUNTIES = "/us_counties_geo.json";
+    const US_COUNTIES = "/contiguous_us_counties_geo.json";
     const HOME_VALS = "/median_house_values.csv";
     const INCOMES = "/median_incomes.csv";
     // Array contains html ID names corresponding to each div containing a map (SVG)
@@ -535,7 +535,7 @@ export default defineComponent({
 
     // Handles zoom feature on active map
     function handleZoom(e) {
-      d3.select("#" + activeMap + " svg g").attr("transform", e.transform);
+      d3.select("#" + activeMap + " svg g");
     }
 
     // DATA / UPDATING VISUALISATION HANDLING:
