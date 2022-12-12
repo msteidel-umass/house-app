@@ -69,7 +69,7 @@
       </v-col>
       <v-col style="text-align: center" id="d3-map" cols="8">
         <v-container class="container">
-          <load-spinner v-if="showHideSpinner" />
+          <load-spinner v-if="false" />
           <div id="home_values" class="map"></div>
           <div id="incomes" class="map"></div>
           <div id="combined" class="map"></div>
