@@ -6,7 +6,7 @@
 -(Assuming Windows), ensure Path env variable is properly set--Add: C:/Program Files/nodejs/ to Sytem's Path variable
 -After node is installed open a terminal and install yarn package manager `npm install --global yarn`
 -Ensure User Path env variable is set--Add: C:\Users\[username]\AppData\Roaming\npm\ to User's Path environmental variable
--Install vue-clickaway `npm install vue-clickaway`
+-Install vue-select `npm install vue-select` (might remove)
 
 ## Build Setup
 
