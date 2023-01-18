@@ -135,7 +135,7 @@ export default defineComponent({
     });
 
     onMounted(() => {
-      drawMap();
+      drawMap(US_COUNTIES);
     });
 
     // Define function to create toggle map btns
@@ -564,14 +564,14 @@ export default defineComponent({
       showSpinner.value = false;
     }
     //Function Draws d3-map
-    function drawMap() {
+    function drawMap(inputGeoJson) {
       // Define window dim vars
       const WIDTH = document.getElementById("d3-map").clientWidth;
       const HEIGHT = document.getElementById("d3-map").clientHeight;
 
       //Load the data as a Promise
       Promise.all([
-        d3.json(US_COUNTIES),
+        d3.json(inputGeoJson),
         d3.csv(HOME_VALS),
         d3.csv(INCOMES),
       ]).then((data) => {
