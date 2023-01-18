@@ -98,6 +98,9 @@ export default defineComponent({
   setup() {
     // Define geo json & csv file(s)
     const US_COUNTIES = "/contiguous_us_counties_geo.json";
+    const AK_COUNTIES = "/alaska_counties_geo.json"
+    const HI_COUNTIES = "/hawaii_counties_geo.json"
+    const PR_COUNTIES = "/puerto_rico_counties_geo.json"
     const HOME_VALS = "/median_house_values.csv";
     const INCOMES = "/median_incomes.csv";
     // Array contains html ID names corresponding to each div containing a map (SVG)
@@ -136,6 +139,9 @@ export default defineComponent({
 
     onMounted(() => {
       drawMap(US_COUNTIES);
+      drawMap(AK_COUNTIES);
+      drawMap(HI_COUNTIES);
+      drawMap(PR_COUNTIES);
     });
 
     // Define function to create toggle map btns
