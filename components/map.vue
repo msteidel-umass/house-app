@@ -139,9 +139,9 @@ export default defineComponent({
 
     onMounted(() => {
       drawMap(US_COUNTIES);
-      drawMap(AK_COUNTIES);
-      drawMap(HI_COUNTIES);
-      drawMap(PR_COUNTIES);
+      //drawMap(AK_COUNTIES);
+      //drawMap(HI_COUNTIES);
+      //drawMap(PR_COUNTIES);
     });
 
     // Define function to create toggle map btns
@@ -200,6 +200,7 @@ export default defineComponent({
 
     // Update legend content after toggle for each "map" page
     function updateLegend() {
+      /*
       var title = "";
       var attr1 = "";
       var attr2 = "";
@@ -219,6 +220,16 @@ export default defineComponent({
 
       document.getElementById("legend").innerHTML =
         '<p id="a1">' + attr1 + "</p>" + '<p id="a2">' + attr2 + "</p>";
+        */
+
+      let color1 = d3.interpolateRdBu(0);
+
+      document.getElementById("legend").innerHTML =
+        '<div class="box1">' + "." + "</div>"
+
+      let box1 = document.querySelector(".box1");
+
+      box1.style.backgroundColor = color1;
     }
     // Define function to create a range slider input for user to select start/end dates
     function dualSliderInput(div, min, max, changeYears) {
@@ -541,7 +552,7 @@ export default defineComponent({
 
     // Handles zoom feature on active map
     function handleZoom(e) {
-      d3.select("#" + activeMap + " svg g");
+      d3.select("#" + activeMap + " svg g");//.attr("transform", e.transform);;
     }
 
     // DATA / UPDATING VISUALISATION HANDLING:
