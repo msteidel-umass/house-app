@@ -8723,6 +8723,11 @@ public-encrypt@^4.0.0:
     randombytes "^2.0.1"
     safe-buffer "^5.1.2"
 
+pug-beautify@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/pug-beautify/-/pug-beautify-0.1.1.tgz"
+  integrity sha512-fadMtPHaRr6Ep6SDjPeCrsq5/Ody7N0kGNVemeoD3NeP6PeAaSyN4LMtIad0Tjzvn2b6913OqO7KCPxi65tA3A==
+
 pump@^2.0.0:
   version "2.0.1"
   resolved "https://registry.npmjs.org/pump/-/pump-2.0.1.tgz"
