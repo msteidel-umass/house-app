@@ -73,11 +73,11 @@ export default defineComponent({
 	},
 	setup() {
 		// Define geo json & csv file(s)
-		const US_STATES = "/Country/contiguous_us_states_geo.json";
-		const US_COUNTIES = "/Country/contiguous_us_counties_geo.json";
-		const AK_COUNTIES = "/States/alaska_counties_geo.json"
-		const HI_COUNTIES = "/States/hawaii_counties_geo.json"
-		const PR_COUNTIES = "/States/puerto_rico_counties_geo.json"
+		const US_STATES = "/GeoJson/Country/contiguous_us_states_geo.json";
+		const US_COUNTIES = "/GeoJson/Country/contiguous_us_counties_geo.json";
+		const AK_COUNTIES = "/GeoJson/States/alaska_counties_geo.json"
+		const HI_COUNTIES = "/GeoJson/States/hawaii_counties_geo.json"
+		const PR_COUNTIES = "/GeoJson/States/puerto_rico_counties_geo.json"
 		const HOME_VALS = "/CSV/median_house_values.csv";
 		const INCOMES = "/CSV/median_incomes.csv";
 		// Array contains html ID names corresponding to each div containing a map (SVG)
