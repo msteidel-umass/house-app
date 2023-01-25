@@ -115,8 +115,8 @@ export default defineComponent({
 		});
 
 		onMounted(() => {
-			//drawMap(US_STATES);
-			drawMap(US_COUNTIES);
+			drawMap(US_STATES);
+			//drawMap(US_COUNTIES);
 			//drawMap(AK_COUNTIES);
 			//drawMap(HI_COUNTIES);
 			//drawMap(PR_COUNTIES);
