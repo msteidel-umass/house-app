@@ -530,7 +530,7 @@ export default defineComponent({
 
 		// Handles zoom feature on active map
 		function handleZoom(e) {
-			d3.select("#" + activeMap + " svg g"); //.attr("transform", e.transform);;
+			d3.select("#" + activeMap + " svg g");//.attr("transform", e.transform);
 		}
 
 		// DATA / UPDATING VISUALISATION HANDLING:
@@ -657,7 +657,7 @@ export default defineComponent({
 				let dateSlider = dualSliderInput(
 					"control_overlay",
 					2010,
-					2020,
+					2021,
 					dataUpdateHandler
 				);
 				dateSlider[0].addEventListener("input", controlSlider);
@@ -673,7 +673,7 @@ export default defineComponent({
 					}
 					toggleMap(MAP_DIVS[0].id);
 				}
-				__init__(2010, 2020);
+				__init__(2010, 2021);
 			});
 		}
 		return {

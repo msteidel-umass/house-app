@@ -23749,13 +23749,13 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "270",
-				"NAME": "Wade Hampton",
+				"NAME": "Kusilvak",
 				"CENSUSAREA": 17081.433,
 				"STATE_ABBR": "AK",
 				"STATE_NAME": "Alaska",
 				"LSAD": "CA",
 				"STATE": "02",
-				"GEO_ID": "0500000US02270"
+				"GEO_ID": "0500000US02158"
 			},
 			"geometry": {
 				"type": "Polygon",
