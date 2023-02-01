@@ -1,60 +1,81 @@
 <template>
-<div>
-	<v-row class="pa-5">
-		<v-col cols="4">
-			<v-card outlined class="menu">
-				<div class="card-title">Adjust Years of Interest</div>
-				<v-row class="pa-3" style="text-align: center">
-					<v-col cols="3">
-						<div id="t1" class="text_box"></div>
-					</v-col>
-					<v-col>
-						<div id="control_overlay"></div>
-					</v-col>
-					<v-col cols="3">
-						<div id="t2" class="text_box ma-0"></div>
-					</v-col>
-				</v-row>
-			</v-card>
-			<v-card outlined class="menu">
-				<div class="card-title">State</div>
-				<div class="pa-3" style="text-align: center">
-					<v-select :options="states"></v-select>
-				</div>
-			</v-card>
-			<v-card outlined class="menu">
-				<div class="card-title">Display</div>
-				<div class="pa-3" style="text-align: center">
-					<v-btn block fab large outlined tile x-small @click="toggleMap('incomes')">
-						<span class="buttonText">Incomes</span></v-btn>
+	<div>
+		<v-row class="pa-5">
+			<v-col cols="4">
+				<v-card outlined class="menu">
+					<div class="card-title">Adjust Years of Interest</div>
 
-					<v-btn block fab large outlined tile x-small @click="toggleMap('home_values')"><span class="buttonText">House Prices</span></v-btn>
+					<v-row class="pa-3" style="text-align: center">
+						<v-col cols="3">
+							<div id="t1" class="text_box"></div>
+						</v-col>
+						<v-col>
+							<div id="control_overlay"></div>
+						</v-col>
+						<v-col cols="3">
+							<div id="t2" class="text_box ma-0"></div>
+						</v-col>
+					</v-row>
+				</v-card>
+				<v-card outlined class="menu">
+					<div class="card-title">Display</div>
+					<div class="pa-3" style="text-align: center">
+						<v-btn
+							block
+							fab
+							large
+							outlined
+							tile
+							x-small
+							@click="toggleMap('incomes')"
+						>
+							<span class="buttonText">Incomes</span></v-btn
+						>
 
-					<v-btn block fab large outlined tile x-small @click="toggleMap('combined')"><span class="buttonText"> Market Health </span></v-btn>
-				</div>
-			</v-card>
-			<v-card outlined class="menu">
-				<div class="card-title">Legend</div>
-				<div class="pa-5" style="text-align: center">
-					<div id="legend"></div>
-				</div>
-			</v-card>
-		</v-col>
-		<v-col style="text-align: center" id="d3-map" cols="8">
-			<v-container class="container">
-				<load-spinner v-if="false" />
-				<div id="home_values" class="map"></div>
-				<div id="incomes" class="map"></div>
-				<div id="combined" class="map"></div>
-			</v-container>
-		</v-col>
-		<v-col>
-			<div id="tooltip"></div>
-		</v-col>
-	</v-row>
-</div>
+						<v-btn
+							block
+							fab
+							large
+							outlined
+							tile
+							x-small
+							@click="toggleMap('home_values')"
+							><span class="buttonText">House Prices</span></v-btn
+						>
+
+						<v-btn
+							block
+							fab
+							large
+							outlined
+							tile
+							x-small
+							@click="toggleMap('combined')"
+							><span class="buttonText"> Market Health </span></v-btn
+						>
+					</div>
+				</v-card>
+				<v-card outlined class="menu">
+					<div class="card-title">Legend</div>
+					<div class="pa-5" style="text-align: center">
+						<div id="legend"></div>
+					</div>
+				</v-card>
+			</v-col>
+			<v-col style="text-align: center" id="d3-map" cols="8">
+				<v-container class="container">
+					<load-spinner v-if="false" />
+					<div id="home_values" class="map"></div>
+					<div id="incomes" class="map"></div>
+					<div id="combined" class="map"></div>
+				</v-container>
+			</v-col>
+			<v-col>
+				<div id="tooltip"></div>
+			</v-col>
+		</v-row>
+	</div>
 </template>
-
 <script>
 import {
 	computed,
@@ -63,21 +84,20 @@ import {
 	ref,
 } from "@nuxtjs/composition-api";
 import loadSpinner from "@/components/load_spinner.vue";
-import vselect from "@/components/select.vue";
 import * as d3 from "d3";
 
 export default defineComponent({
 	name: "Map",
-	components: {
-		loadSpinner
-	},
+	components: { loadSpinner },
 	setup() {
 		// Define geo json & csv file(s)
-		const US_STATES = "/GeoJson/Country/contiguous_us_states_geo.json";
 		const US_COUNTIES = "/GeoJson/Country/contiguous_us_counties_geo.json";
-		const AK_COUNTIES = "/GeoJson/States/alaska_counties_geo.json"
-		const HI_COUNTIES = "/GeoJson/States/hawaii_counties_geo.json"
-		const PR_COUNTIES = "/GeoJson/States/puerto_rico_counties_geo.json"
+		const US_STATES = "/GeoJson/Country/contiguous_us_states_geo.json";
+
+		const ALASKA = "/GeoJson/States/alaska_geo.json";
+
+		const MA_COUNTIES = "/GeoJson/States/massachusetts_counties_geo.json";
+
 		const HOME_VALS = "/CSV/median_house_values.csv";
 		const INCOMES = "/CSV/median_incomes.csv";
 		// Array contains html ID names corresponding to each div containing a map (SVG)
@@ -115,11 +135,9 @@ export default defineComponent({
 		});
 
 		onMounted(() => {
-			drawMap(US_STATES);
 			//drawMap(US_COUNTIES);
-			//drawMap(AK_COUNTIES);
-			//drawMap(HI_COUNTIES);
-			//drawMap(PR_COUNTIES);
+			drawMap(US_STATES);
+			//drawMap(ALASKA);
 		});
 
 		// Define function to create toggle map btns
@@ -178,36 +196,25 @@ export default defineComponent({
 
 		// Update legend content after toggle for each "map" page
 		function updateLegend() {
-			/*
 			var title = "";
 			var attr1 = "";
 			var attr2 = "";
 			if (activeMap == MAP_DIVS[0].id) {
-			  title = "% Change in Median Home Values";
-			  attr1 = "Home Value Decrease";
-			  attr2 = "Home Value Increase";
+				title = "% Change in Median Home Values";
+				attr1 = "Home Value Decrease";
+				attr2 = "Home Value Increase";
 			} else if (activeMap == MAP_DIVS[1].id) {
-			  title = "% Change in Median Income";
-			  attr1 = "Income Decrease";
-			  attr2 = "Income Increase";
+				title = "% Change in Median Income";
+				attr1 = "Income Decrease";
+				attr2 = "Income Increase";
 			} else if (activeMap == MAP_DIVS[2].id) {
-			  title = "% Market Inflation";
-			  attr1 = "Market Over-valued";
-			  attr2 = "Market Under-valued";
+				title = "% Market Inflation";
+				attr1 = "Market Over-valued";
+				attr2 = "Market Under-valued";
 			}
 
 			document.getElementById("legend").innerHTML =
-			  '<p id="a1">' + attr1 + "</p>" + '<p id="a2">' + attr2 + "</p>";
-			  */
-
-			let color1 = d3.interpolateRdBu(0);
-
-			document.getElementById("legend").innerHTML =
-				'<div class="box1">' + "." + "</div>"
-
-			let box1 = document.querySelector(".box1");
-
-			box1.style.backgroundColor = color1;
+				'<p id="a1">' + attr1 + "</p>" + '<p id="a2">' + attr2 + "</p>";
 		}
 		// Define function to create a range slider input for user to select start/end dates
 		function dualSliderInput(div, min, max, changeYears) {
@@ -560,121 +567,49 @@ export default defineComponent({
 		}
 		//Function Draws d3-map
 		function drawMap(inputGeoJson) {
-			// Define window dim vars
 			const WIDTH = document.getElementById("d3-map").clientWidth;
 			const HEIGHT = document.getElementById("d3-map").clientHeight;
 
-			//Load the data as a Promise
-			Promise.all([
-				d3.json(inputGeoJson),
-				d3.csv(HOME_VALS),
-				d3.csv(INCOMES),
-			]).then((data) => {
-				// Init vars with data
-				geoJsonCounties = data[0];
-				homeValues = data[1];
-				incomeValues = data[2];
-				// Initialize each dict with every county's FIPS No., to be used as an index
-				for (var key in homeValues[0]) {
-					medianValueRates[key] = null;
-					medianIncomeRates[key] = null;
-					combinedRates[key] = null;
-				}
+			var width = WIDTH - mapPadding;
+			var height = HEIGHT + HEIGHT / 4;
 
-				// CONSTRUCT D3 SVG:
+			var projection = d3.geoAlbers();
+			var geoPath = d3.geoPath()
+				.projection(projection);
+			var center = geoPath.centroid(inputGeoJson);
+			var bounds = geoPath.bounds(inputGeoJson);
+			var hscale  = scale*width  / (bounds[1][0] - bounds[0][0]);
+			var vscale  = scale*height / (bounds[1][1] - bounds[0][1]);
+			var scale   = (hscale < vscale) ? hscale : vscale;
+			var offset  = [width - (bounds[0][0] + bounds[1][0])/2, height - (bounds[0][1] + bounds[1][1])/2];
 
-				// Define the D3 projection, size, and geoPathGenerator
-				const projection = d3
-					.geoAlbers()
-					.translate([WIDTH / 2, HEIGHT / 2 + mapPadding]) // center map
-					.scale(WIDTH - WIDTH / 10); // set inital scale to screen width
-				const geoPathGen = d3.geoPath().projection(projection);
-				// Allow for D3 zooming
-				const zoom = d3
-					.zoom()
-					.scaleExtent([1, 15]) // zoom scale limits
-					.on("zoom", handleZoom); // on a zoom event, call handleZoom
-				// tooltip will update their respective map's rate data
-				const tooltip = d3.select("#tooltip");
-				// Append a SVG element to each map display div
-				var svg = d3
-					.selectAll(
-						"#" + MAP_DIVS[0].id + ",#" + MAP_DIVS[1].id + ",#" + MAP_DIVS[2].id
-					)
-					.append("svg")
-					.attr("width", WIDTH - mapPadding)
-					.attr("height", HEIGHT + HEIGHT / 4)
-					.call(zoom);
-				// Svg grouping element constant--path elements are appended to a group
-				var g = svg.append("g");
+			projection = d3
+				.geoAlbers()
+				.center(center)
+				.scale(scale)
+				.translate(offset);
+			
+				geoPath = geoPath.projection(projection);
 
-				// Construct the SVG--append GEO data to "path" elements
-				g.selectAll("path")
-					.data(geoJsonCounties.features)
-					.enter()
-					.append("path")
-					.attr("d", (d) => {
-						return geoPathGen(d);
-					})
-					.on("mouseenter", (m, d) => {
-						tooltip
-							.transition()
-							.delay(200)
-							.style("display", "grid") // show tooltip (container is styled as grid-type display)
-							.style("opacity", 0.9);
-						tooltip
-							.html(updateToolTip(d)) // Passes each path to updateToolTip func which return's tooltip's corresponding inner html
-							.style("left", m.clientX - WIDTH / 2 + "px")
-							.style("top", m.clientY + "px");
-					})
-					.on("mouseleave", (m, d) => {
-						tooltip.transition().style("display", "none"); // hide tooltip displau
-					});
-				// CREATE / INITIALIZE ALL UI CONTROLS:
-				/*
-				// Create the map display toggle btns
-				let toggleValueBtn = createToggleBtn(
-				  "control_overlay",
-				  "home_values",
-				  "Change in Home Values",
-				  toggleMap
-				);
-				let toggleIncomeBtn = createToggleBtn(
-				  "control_overlay",
-				  "incomes",
-				  "Change in Incomes",
-				  toggleMap
-				);
-				let toggleCombinedBtn = createToggleBtn(
-				  "control_overlay",
-				  "combined",
-				  "Housing Market Health",
-				  toggleMap
-				);
-				*/
+			var svg = d3
+			.selectAll(
+				"#" + MAP_DIVS[0].id + ",#" + MAP_DIVS[1].id + ",#" + MAP_DIVS[2].id
+			)
+			.append("svg")
+			.attr("width", width)
+			.attr("height", height);
 
-				// Create the date input range-sliders, add event listeners, & associated control-logic
-				let dateSlider = dualSliderInput(
-					"control_overlay",
-					2010,
-					2021,
-					dataUpdateHandler
-				);
-				dateSlider[0].addEventListener("input", controlSlider);
-				dateSlider[1].addEventListener("input", controlSlider);
+			// Svg grouping element constant--path elements are appended to a group
+			var g = svg.append("g");
 
-				// INIT THE PAGE:
-
-				// Inits the web-page upon its initial load w/default (hard-coded) date values
-				function __init__(startYearDefault, endYearDefault) {
-					for (var i = 0; i < Object.keys(MAP_DIVS).length; i++) {
-						toggleMap(MAP_DIVS[i].id);
-						dataUpdateHandler(startYearDefault, endYearDefault);
-					}
-					toggleMap(MAP_DIVS[0].id);
-				}
-				__init__(2010, 2021);
-			});
+			// Construct the SVG--append GEO data to "path" elements
+			g.selectAll("path")
+				.data(inputGeoJson.features)
+				.enter()
+				.append("path")
+				.attr("d", (d) => {
+					return geoPathGen(d);
+				})
 		}
 		return {
 			drawMap,
@@ -699,8 +634,7 @@ export default defineComponent({
 	},
 });
 </script>
-
-<style>
+<style type="text/css">
 /* CSS Reset for all browsers (prevents buggy padding) */
 * {
 	margin: 0;
@@ -711,20 +645,16 @@ export default defineComponent({
 	vertical-align: baseline;
 	background: transparent;
 }
-
 .container {
 	position: relative;
 }
-
 .buttonText {
 	font-family: "sans-serif";
 	font-size: 12px;
 }
-
 .buttonSelected {
 	color: gray;
 }
-
 .card-title {
 	border-bottom: solid 1px black;
 	letter-spacing: 1px;
@@ -794,7 +724,6 @@ div#control_overlay button:active {
 /*---DATE-RANGE SLIDER STYLING---*/
 /*-------------------------------*/
 .range_slider {
-	-webkit-appearance: none;
 	width: 80%;
 	background: transparent;
 	border: 2px outset white;
@@ -811,7 +740,6 @@ div#control_overlay button:active {
 }
 
 .range_slider::-webkit-slider-thumb {
-	-webkit-appearance: none;
 	z-index: 3;
 	height: 15px;
 	width: 15px;
