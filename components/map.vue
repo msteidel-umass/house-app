@@ -138,6 +138,7 @@ export default defineComponent({
 			//drawMap(US_COUNTIES);
 			drawMap(US_STATES);
 			//drawMap(ALASKA);
+			//drawMap(MA_COUNTIES);
 		});
 
 		// Define function to create toggle map btns
@@ -565,51 +566,125 @@ export default defineComponent({
 			//turn off loading animation
 			showSpinner.value = false;
 		}
-		//Function Draws d3-map
+			//Function Draws d3-map
 		function drawMap(inputGeoJson) {
-			const WIDTH = document.getElementById("d3-map").clientWidth;
-			const HEIGHT = document.getElementById("d3-map").clientHeight;
+			// Define window dim vars
+			const width = document.getElementById("d3-map").clientWidth;
+			const height = document.getElementById("d3-map").clientHeight;
 
-			var width = WIDTH - mapPadding;
-			var height = HEIGHT + HEIGHT / 4;
+			//Load the data as a Promise
+			Promise.all([
+				d3.json(inputGeoJson),
+				d3.csv(HOME_VALS),
+				d3.csv(INCOMES),
+			]).then((data) => {
+				// Init vars with data
+				geoJsonCounties = data[0];
+				homeValues = data[1];
+				incomeValues = data[2];
+				// Initialize each dict with every county's FIPS No., to be used as an index
+				for (var key in homeValues[0]) {
+					medianValueRates[key] = null;
+					medianIncomeRates[key] = null;
+					combinedRates[key] = null;
+				}
 
-			var projection = d3.geoAlbers();
-			var geoPath = d3.geoPath()
-				.projection(projection);
-			var center = geoPath.centroid(inputGeoJson);
-			var bounds = geoPath.bounds(inputGeoJson);
-			var hscale  = scale*width  / (bounds[1][0] - bounds[0][0]);
-			var vscale  = scale*height / (bounds[1][1] - bounds[0][1]);
-			var scale   = (hscale < vscale) ? hscale : vscale;
-			var offset  = [width - (bounds[0][0] + bounds[1][0])/2, height - (bounds[0][1] + bounds[1][1])/2];
+				var center = d3.geoCentroid(geoJsonCounties);
+				var scale   = (width < height) ? width : height;
+				var offset = [width/2, height/2];
 
-			projection = d3
-				.geoAlbers()
-				.center(center)
-				.scale(scale)
-				.translate(offset);
-			
-				geoPath = geoPath.projection(projection);
+				// CONSTRUCT D3 SVG:
 
-			var svg = d3
-			.selectAll(
-				"#" + MAP_DIVS[0].id + ",#" + MAP_DIVS[1].id + ",#" + MAP_DIVS[2].id
-			)
-			.append("svg")
-			.attr("width", width)
-			.attr("height", height);
+				// Define the D3 projection, size, and geoPathGenerator
+				var projection = d3
+					.geoMercator()
+					.center(center)
+					.scale(scale)
+	 				.translate(offset);
+				var geoPathGen = d3.geoPath().projection(projection);
 
-			// Svg grouping element constant--path elements are appended to a group
-			var g = svg.append("g");
+				var bounds = geoPathGen.bounds(geoJsonCounties);
+				var hscale = scale*width / (bounds[1][0] - bounds[0][0]);
+				var vscale  = scale*height / (bounds[1][1] - bounds[0][1]);
+				scale   = (hscale < vscale) ? hscale : vscale;
+				offset  = [width - (bounds[0][0] + bounds[1][0])/2, height - (bounds[0][1] + bounds[1][1])/2];
 
-			// Construct the SVG--append GEO data to "path" elements
-			g.selectAll("path")
-				.data(inputGeoJson.features)
-				.enter()
-				.append("path")
-				.attr("d", (d) => {
-					return geoPathGen(d);
-				})
+				projection = d3
+					.geoMercator()
+					.center(center)
+					.scale(scale)
+					.translate(offset);
+
+					geoPathGen = geoPathGen.projection(projection);
+
+				// Allow for D3 zooming
+				const zoom = d3
+					.zoom()
+					.scaleExtent([1, 15]) // zoom scale limits
+					.on("zoom", handleZoom); // on a zoom event, call handleZoom
+				// tooltip will update their respective map's rate data
+				const tooltip = d3.select("#tooltip");
+				// Append a SVG element to each map display div
+				var svg = d3
+					.selectAll(
+						"#" + MAP_DIVS[0].id + ",#" + MAP_DIVS[1].id + ",#" + MAP_DIVS[2].id
+					)
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height)
+					.call(zoom);
+				// Svg grouping element constant--path elements are appended to a group
+				var g = svg.append("g");
+
+				// Construct the SVG--append GEO data to "path" elements
+				g.selectAll("path")
+					.data(geoJsonCounties.features)
+					.enter()
+					.append("path")
+					.attr("d", (d) => {
+						return geoPathGen(d);
+					})
+					.on("mouseenter", (m, d) => {
+						tooltip
+							.transition()
+							.delay(200)
+							.style("display", "grid") // show tooltip (container is styled as grid-type display)
+							.style("opacity", 0.9);
+						tooltip
+							.html(updateToolTip(d)) // Passes each path to updateToolTip func which return's tooltip's corresponding inner html
+							.style("left", m.clientX - WIDTH / 2 + "px")
+							.style("top", m.clientY + "px");
+					})
+					.on("mouseleave", (m, d) => {
+						tooltip.transition().style("display", "none"); // hide tooltip displau
+					})
+					.on("click", (m, d) => {
+						d3.selectAll("svg").remove();
+						drawMap(MA_COUNTIES);
+					})
+
+				// Create the date input range-sliders, add event listeners, & associated control-logic
+				let dateSlider = dualSliderInput(
+					"control_overlay",
+					2010,
+					2020,
+					dataUpdateHandler
+				);
+				dateSlider[0].addEventListener("input", controlSlider);
+				dateSlider[1].addEventListener("input", controlSlider);
+
+				// INIT THE PAGE:
+
+				// Inits the web-page upon its initial load w/default (hard-coded) date values
+				function __init__(startYearDefault, endYearDefault) {
+					for (var i = 0; i < Object.keys(MAP_DIVS).length; i++) {
+						toggleMap(MAP_DIVS[i].id);
+						dataUpdateHandler(startYearDefault, endYearDefault);
+					}
+					toggleMap(MAP_DIVS[0].id);
+				}
+				__init__(2010, 2020);
+			});
 		}
 		return {
 			drawMap,
