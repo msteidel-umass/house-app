@@ -94,8 +94,12 @@ export default defineComponent({
 		const US_COUNTIES = "/GeoJson/Country/contiguous_us_counties_geo.json";
 		const US_STATES = "/GeoJson/Country/contiguous_us_states_geo.json";
 
-		const ALASKA = "/GeoJson/States/alaska_geo.json";
+		const ALASKA = "/GeoJson/States/alaska_geo.json"; //bugged
+		const HAWAII = "/GeoJson/States/hawaii_geo.json";
+		const PUERTO_RICO = "/GeoJson/States/puerto_rico_geo.json"
 
+		const AL_COUNTIES = "/GeoJson/States/alabama_counties_geo.json"
+		const AK_COUNTIES = "/GeoJson/States/alaska_counties_geo.json"
 		const MA_COUNTIES = "/GeoJson/States/massachusetts_counties_geo.json";
 
 		const HOME_VALS = "/CSV/median_house_values.csv";
@@ -136,9 +140,13 @@ export default defineComponent({
 
 		onMounted(() => {
 			//drawMap(US_COUNTIES);
-			drawMap(US_STATES);
-			//drawMap(ALASKA);
+			//drawMap(US_STATES);
+			drawMap(ALASKA);
+			//drawMap(AK_COUNTIES);
 			//drawMap(MA_COUNTIES);
+			//drawMap(HAWAII);
+			//drawMap(PUERTO_RICO);
+			//drawMap(AL_COUNTIES);
 		});
 
 		// Define function to create toggle map btns
@@ -591,7 +599,7 @@ export default defineComponent({
 
 				var center = d3.geoCentroid(geoJsonCounties);
 				var scale   = (width < height) ? width : height;
-				var offset = [width/2, height/2];
+				var offset = [(width/2)-100, height/2];
 
 				// CONSTRUCT D3 SVG:
 
@@ -599,7 +607,7 @@ export default defineComponent({
 				var projection = d3
 					.geoMercator()
 					.center(center)
-					.scale(scale)
+					.scale(1.3*scale)
 	 				.translate(offset);
 				var geoPathGen = d3.geoPath().projection(projection);
 
