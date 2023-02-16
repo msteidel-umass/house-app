@@ -381,7 +381,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "045",
-				"NAME": "Comer\u00ef\u00bf\u00bdo",
+				"NAME": "Comerío",
 				"CENSUSAREA": 28.401,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -669,7 +669,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "083",
-				"NAME": "Las Mar\u00ef\u00bf\u00bdas",
+				"NAME": "Las Marías",
 				"CENSUSAREA": 46.36,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -1807,7 +1807,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "055",
-				"NAME": "Gu\u00ef\u00bf\u00bdnica",
+				"NAME": "Guánica",
 				"CENSUSAREA": 37.05,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -3071,7 +3071,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "117",
-				"NAME": "Rinc\u00ef\u00bf\u00bdn",
+				"NAME": "Rincón",
 				"CENSUSAREA": 14.288,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -3139,7 +3139,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "119",
-				"NAME": "R\u00ef\u00bf\u00bdo Grande",
+				"NAME": "Río Grande",
 				"CENSUSAREA": 60.623,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -3259,7 +3259,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "125",
-				"NAME": "San Germ\u00ef\u00bf\u00bdn",
+				"NAME": "San Germán",
 				"CENSUSAREA": 54.498,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -3407,7 +3407,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "131",
-				"NAME": "San Sebasti\u00ef\u00bf\u00bdn",
+				"NAME": "San Sebastián",
 				"CENSUSAREA": 70.423,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -3659,7 +3659,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "075",
-				"NAME": "Juana D\u00ef\u00bf\u00bdaz",
+				"NAME": "Juana Díaz",
 				"CENSUSAREA": 60.277,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -4259,7 +4259,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "021",
-				"NAME": "Bayam\u00ef\u00bf\u00bdn",
+				"NAME": "Bayamón",
 				"CENSUSAREA": 44.324,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -4363,7 +4363,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "029",
-				"NAME": "Can\u00ef\u00bf\u00bdvanas",
+				"NAME": "Canóvanas",
 				"CENSUSAREA": 32.865,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -4879,7 +4879,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "111",
-				"NAME": "Pe\u00ef\u00bf\u00bduelas",
+				"NAME": "Peñuelas",
 				"CENSUSAREA": 44.617,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -5303,7 +5303,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "011",
-				"NAME": "A\u00ef\u00bf\u00bdasco",
+				"NAME": "Añasco",
 				"CENSUSAREA": 39.285,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -5663,7 +5663,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "033",
-				"NAME": "Cata\u00ef\u00bf\u00bdo",
+				"NAME": "Cataño",
 				"CENSUSAREA": 4.845,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -6483,7 +6483,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "087",
-				"NAME": "Lo\u00ef\u00bf\u00bdza",
+				"NAME": "Loíza",
 				"CENSUSAREA": 19.366,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -6583,7 +6583,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "091",
-				"NAME": "Manat\u00ef\u00bf\u00bd",
+				"NAME": "Manatí",
 				"CENSUSAREA": 45.128,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",
@@ -6687,7 +6687,7 @@
 			"type": "Feature",
 			"properties": {
 				"COUNTY": "097",
-				"NAME": "Mayag\u00ef\u00bf\u00bdez",
+				"NAME": "Mayagüez",
 				"CENSUSAREA": 77.645,
 				"STATE_ABBR": "PR",
 				"STATE_NAME": "Puerto Rico",

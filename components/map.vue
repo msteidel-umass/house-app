@@ -94,13 +94,63 @@ export default defineComponent({
 		const US_COUNTIES = "/GeoJson/Country/contiguous_us_counties_geo.json";
 		const US_STATES = "/GeoJson/Country/contiguous_us_states_geo.json";
 
-		const ALASKA = "/GeoJson/States/alaska_geo.json"; //bugged
+		const ALASKA = "/GeoJson/States/alaska_geo.json";
 		const HAWAII = "/GeoJson/States/hawaii_geo.json";
-		const PUERTO_RICO = "/GeoJson/States/puerto_rico_geo.json"
+		const PUERTO_RICO = "/GeoJson/States/puerto_rico_geo.json";
 
-		const AL_COUNTIES = "/GeoJson/States/alabama_counties_geo.json"
-		const AK_COUNTIES = "/GeoJson/States/alaska_counties_geo.json"
+		const AL_COUNTIES = "/GeoJson/States/alabama_counties_geo.json";
+		const AK_COUNTIES = "/GeoJson/States/alaska_counties_geo.json";
+		const AZ_COUNTIES = "/GeoJson/States/arizona_counties_geo.json";
+		const AR_COUNTIES = "/GeoJson/States/arkansas_counties_geo.json";
+		const CA_COUNTIES = "/GeoJson/States/california_counties_geo.json";
+		const CO_COUNTIES = "/GeoJson/States/colorado_counties_geo.json";
+		const CT_COUNTIES = "/GeoJson/States/connecticut_counties_geo.json";
+		const DE_COUNTIES = "/GeoJson/States/delaware_counties_geo.json";
+		const FL_COUNTIES = "/GeoJson/States/florida_counties_geo.json";
+		const GA_COUNTIES = "/GeoJson/States/georgia_counties_geo.json";
+		const HI_COUNTIES = "/GeoJson/States/hawaii_counties_geo.json";
+		const ID_COUNTIES = "/GeoJson/States/idaho_counties_geo.json";
+		const IL_COUNTIES = "/GeoJson/States/illinois_counties_geo.json";
+		const IN_COUNTIES = "/GeoJson/States/indiana_counties_geo.json";
+		const IA_COUNTIES = "/GeoJson/States/iowa_counties_geo.json";
+		const KS_COUNTIES = "/GeoJson/States/kansas_counties_geo.json";
+		const KY_COUNTIES = "/GeoJson/States/kentucky_counties_geo.json";
+		const LA_COUNTIES = "/GeoJson/States/louisiana_counties_geo.json";
+		const ME_COUNTIES = "/GeoJson/States/maine_counties_geo.json";
+		const MD_COUNTIES = "/GeoJson/States/maryland_counties_geo.json";
 		const MA_COUNTIES = "/GeoJson/States/massachusetts_counties_geo.json";
+		const MI_COUNTIES = "/GeoJson/States/michigan_counties_geo.json";
+		const MN_COUNTIES = "/GeoJson/States/minnesota_counties_geo.json";
+		const MS_COUNTIES = "/GeoJson/States/mississippi_counties_geo.json";
+		const MO_COUNTIES = "/GeoJson/States/missouri_counties_geo.json";
+		const MT_COUNTIES = "/GeoJson/States/montana_counties_geo.json";
+		const NE_COUNTIES = "/GeoJson/States/nebraska_counties_geo.json";
+		const NV_COUNTIES = "/GeoJson/States/nevada_counties_geo.json";
+		const NH_COUNTIES = "/GeoJson/States/new_hampshire_counties_geo.json";
+		const NJ_COUNTIES = "/GeoJson/States/new_jersey_counties_geo.json";
+		const NM_COUNTIES = "/GeoJson/States/new_mexico_counties_geo.json";
+		const NY_COUNTIES = "/GeoJson/States/new_york_counties_geo.json";
+		const NC_COUNTIES = "/GeoJson/States/north_carolina_counties_geo.json";
+		const ND_COUNTIES = "/GeoJson/States/north_dakota_counties_geo.json";
+		const OH_COUNTIES = "/GeoJson/States/ohio_counties_geo.json";
+		const OK_COUNTIES = "/GeoJson/States/oklahoma_counties_geo.json";
+		const OR_COUNTIES = "/GeoJson/States/oregon_counties_geo.json";
+		const PA_COUNTIES = "/GeoJson/States/pennsylvania_counties_geo.json";
+		const RI_COUNTIES = "/GeoJson/States/rhode_island_counties_geo.json";
+		const SC_COUNTIES = "/GeoJson/States/south_carolina_counties_geo.json";
+		const SD_COUNTIES = "/GeoJson/States/south_dakota_counties_geo.json";
+		const TN_COUNTIES = "/GeoJson/States/tennessee_counties_geo.json";
+		const TX_COUNTIES = "/GeoJson/States/texas_counties_geo.json";
+		const UT_COUNTIES = "/GeoJson/States/utah_counties_geo.json";
+		const VT_COUNTIES = "/GeoJson/States/vermont_counties_geo.json";
+		const VA_COUNTIES = "/GeoJson/States/virginia_counties_geo.json";
+		const WA_COUNTIES = "/GeoJson/States/washington_counties_geo.json";
+		const WV_COUNTIES = "/GeoJson/States/west_virginia_counties_geo.json";
+		const WI_COUNTIES = "/GeoJson/States/wisconsin_counties_geo.json";
+		const WY_COUNTIES = "/GeoJson/States/wyoming_counties_geo.json";
+
+		const DC = "/GeoJson/States/district_of_columbia_geo.json";
+		const PR_COUNTIES = "/GeoJson/States/puerto_rico_counties_geo.json"
 
 		const HOME_VALS = "/CSV/median_house_values.csv";
 		const INCOMES = "/CSV/median_incomes.csv";
@@ -139,14 +189,7 @@ export default defineComponent({
 		});
 
 		onMounted(() => {
-			//drawMap(US_COUNTIES);
-			//drawMap(US_STATES);
-			drawMap(ALASKA);
-			//drawMap(AK_COUNTIES);
-			//drawMap(MA_COUNTIES);
-			//drawMap(HAWAII);
-			//drawMap(PUERTO_RICO);
-			//drawMap(AL_COUNTIES);
+			drawMap(US_STATES);
 		});
 
 		// Define function to create toggle map btns
@@ -599,7 +642,7 @@ export default defineComponent({
 
 				var center = d3.geoCentroid(geoJsonCounties);
 				var scale   = (width < height) ? width : height;
-				var offset = [(width/2)-100, height/2];
+				var offset = [width/2, height/2];
 
 				// CONSTRUCT D3 SVG:
 
