@@ -710,8 +710,213 @@ export default defineComponent({
 						tooltip.transition().style("display", "none"); // hide tooltip displau
 					})
 					.on("click", (m, d) => {
-						d3.selectAll("svg").remove();
-						drawMap(MA_COUNTIES);
+						switch(d.properties["NAME"]) {
+							case "Alabama":
+								d3.selectAll("svg").remove();
+								drawMap(AL_COUNTIES);
+								break;
+							case "Alaska":
+								d3.selectAll("svg").remove();
+								drawMap(AK_COUNTIES);
+								break;
+							case "Arkansas":
+								d3.selectAll("svg").remove();
+								drawMap(AR_COUNTIES);
+								break;
+							case "Arizona":
+								d3.selectAll("svg").remove();
+								drawMap(AZ_COUNTIES);
+								break;
+							case "California":
+								d3.selectAll("svg").remove();
+								drawMap(CA_COUNTIES);
+								break;
+							case "Colorado":
+								d3.selectAll("svg").remove();
+								drawMap(CO_COUNTIES);
+								break;
+							case "Connecticut":
+								d3.selectAll("svg").remove();
+								drawMap(CT_COUNTIES);
+								break;
+							case "Delaware":
+								d3.selectAll("svg").remove();
+								drawMap(DE_COUNTIES);
+								break;
+							case "District of Columbia":
+								d3.selectAll("svg").remove();
+								drawMap(DC);
+								break;
+							case "Florida":
+								d3.selectAll("svg").remove();
+								drawMap(FL_COUNTIES);
+								break;
+							case "Georgia":
+								d3.selectAll("svg").remove();
+								drawMap(GA_COUNTIES);
+								break;
+							case "Hawaii":
+								d3.selectAll("svg").remove();
+								drawMap(HI_COUNTIES);
+								break;
+							case "Idaho":
+								d3.selectAll("svg").remove();
+								drawMap(ID_COUNTIES);
+								break;
+							case "Indiana":
+								d3.selectAll("svg").remove();
+								drawMap(IN_COUNTIES);
+								break;
+							case "Iowa":
+								d3.selectAll("svg").remove();
+								drawMap(IA_COUNTIES);
+								break;
+							case "Kansas":
+								d3.selectAll("svg").remove();
+								drawMap(KS_COUNTIES);
+								break;
+							case "Kentucky":
+								d3.selectAll("svg").remove();
+								drawMap(KY_COUNTIES);
+								break;
+							case "Louisiana":
+								d3.selectAll("svg").remove();
+								drawMap(LA_COUNTIES);
+								break;
+							case "Maine":
+								d3.selectAll("svg").remove();
+								drawMap(ME_COUNTIES);
+								break;
+							case "Maryland":
+								d3.selectAll("svg").remove();
+								drawMap(MD_COUNTIES);
+								break;
+							case "Massachusetts":
+								d3.selectAll("svg").remove();
+								drawMap(MA_COUNTIES);
+								break;
+							case "Michigan":
+								d3.selectAll("svg").remove();
+								drawMap(MI_COUNTIES);
+								break;
+							case "Minnesota":
+								d3.selectAll("svg").remove();
+								drawMap(MN_COUNTIES);
+								break;
+							case "Mississippi":
+								d3.selectAll("svg").remove();
+								drawMap(MS_COUNTIES);
+								break;
+							case "Missouri":
+								d3.selectAll("svg").remove();
+								drawMap(MO_COUNTIES);
+								break;
+							case "Montana":
+								d3.selectAll("svg").remove();
+								drawMap(MT_COUNTIES);
+								break;
+							case "Nebraska":
+								d3.selectAll("svg").remove();
+								drawMap(NE_COUNTIES);
+								break;
+							case "Nevada":
+								d3.selectAll("svg").remove();
+								drawMap(NV_COUNTIES);
+								break;
+							case "New Hampshire":
+								d3.selectAll("svg").remove();
+								drawMap(NH_COUNTIES);
+								break;
+							case "New Jersey":
+								d3.selectAll("svg").remove();
+								drawMap(NJ_COUNTIES);
+								break;
+							case "New Mexico":
+								d3.selectAll("svg").remove();
+								drawMap(NM_COUNTIES);
+								break;
+							case "New York":
+								d3.selectAll("svg").remove();
+								drawMap(NY_COUNTIES);
+								break;
+							case "North Carolina":
+								d3.selectAll("svg").remove();
+								drawMap(NC_COUNTIES);
+								break;
+							case "North Dakota":
+								d3.selectAll("svg").remove();
+								drawMap(ND_COUNTIES);
+								break;
+							case "Ohio":
+								d3.selectAll("svg").remove();
+								drawMap(OH_COUNTIES);
+								break;
+							case "Oklahoma":
+								d3.selectAll("svg").remove();
+								drawMap(OK_COUNTIES);
+								break;
+							case "Oregon":
+								d3.selectAll("svg").remove();
+								drawMap(OR_COUNTIES);
+								break;
+							case "Pennsylvania":
+								d3.selectAll("svg").remove();
+								drawMap(PA_COUNTIES);
+								break;
+							case "Puerto Rico":
+								d3.selectAll("svg").remove();
+								drawMap(PR_COUNTIES);
+								break;
+							case "Rhode Island":
+								d3.selectAll("svg").remove();
+								drawMap(RI_COUNTIES);
+								break;
+							case "South Carolina":
+								d3.selectAll("svg").remove();
+								drawMap(SC_COUNTIES);
+								break;
+							case "South Dakota":
+								d3.selectAll("svg").remove();
+								drawMap(SD_COUNTIES);
+								break;
+							case "Tennessee":
+								d3.selectAll("svg").remove();
+								drawMap(TN_COUNTIES);
+								break;
+							case "Texas":
+								d3.selectAll("svg").remove();
+								drawMap(TX_COUNTIES);
+								break;
+							case "Utah":
+								d3.selectAll("svg").remove();
+								drawMap(UT_COUNTIES);
+								break;
+							case "Vermont":
+								d3.selectAll("svg").remove();
+								drawMap(VT_COUNTIES);
+								break;
+							case "Virginia":
+								d3.selectAll("svg").remove();
+								drawMap(VA_COUNTIES);
+								break;
+							case "Washington":
+								d3.selectAll("svg").remove();
+								drawMap(WA_COUNTIES);
+								break;
+							case "West Virginia":
+								d3.selectAll("svg").remove();
+								drawMap(WV_COUNTIES);
+								break;
+							case "Wisconsin":
+								d3.selectAll("svg").remove();
+								drawMap(WI_COUNTIES);
+								break;
+							case "Wyoming":
+								d3.selectAll("svg").remove();
+								drawMap(WY_COUNTIES);
+								break;
+							default:
+						}
 					})
 
 				// Create the date input range-sliders, add event listeners, & associated control-logic
