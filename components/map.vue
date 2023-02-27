@@ -4,7 +4,6 @@
 			<v-col cols="4">	
 				<v-card outlined class="menu">
 					<div class="card-title">Adjust Years of Interest</div>
-
 					<v-row class="pa-3" style="text-align: center">
 						<v-col cols="3">
 							<div id="t1" class="text_box"></div>
@@ -62,7 +61,7 @@
 					</div>
 				</v-card>
 			</v-col>
-			<v-col style="text-align: center, width: 100%, height: 100%" id="d3-map" cols="8">
+			<v-col style="text-align: center" id="d3-map" cols="8">
 				<v-container class="container" id="map-container">
 					<load-spinner v-if="false" />
 					<v-col id="home_values" class="map">
