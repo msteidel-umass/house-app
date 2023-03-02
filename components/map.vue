@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<v-row pa-5>
-			<v-col cols="3">	
+			<v-col cols="2">	
 				<v-card outlined class="menu">
 					<div class="card-title">Adjust Years of Interest</div>
 					<v-row class="pa-3" style="text-align: center">
@@ -742,7 +742,7 @@ export default defineComponent({
 							.style("opacity", 0.9);
 						tooltip
 							.html(updateToolTip(d)) // Passes each path to updateToolTip func which return's tooltip's corresponding inner html
-							.style("left", m.clientX - width / 2 + "px")
+							.style("left", m.clientX + "px")
 							.style("top", m.clientY + "px");
 					})
 					.on("mouseleave", (m, d) => {
