@@ -64,7 +64,7 @@
 			<v-col style="text-align: center" id="d3-map" cols="8">
 				<v-container class="container" id="map-container">
 					<load-spinner v-if="false" />
-					<v-col id="home_values" class="map">
+					<v-col id="incomes" class="map">
 						<v-row>
 							<div id="main-map"></div>
 						</v-row>
@@ -74,7 +74,7 @@
 							<div id="puerto-rico-map"></div>
 						</v-row>
 					</v-col>
-					<v-col id="incomes" class="map">
+					<v-col id="home_values" class="map">
 						<v-row>
 							<div id="main-map"></div>
 						</v-row>
@@ -216,13 +216,11 @@ export default defineComponent({
 		});
 
 		onMounted(() => {
-			
-
 			Promise.resolve()
-			.then(() => drawMap(US_STATES, "main-map"))
-			.then(() => drawMap(ALASKA, "alaska-map"))
-			.then(() => drawMap(HAWAII, "hawaii-map"))
-			.then(() => drawMap(PUERTO_RICO, "puerto-rico-map"));
+				.then(() => drawMap(US_STATES, "main-map"))
+				.then(() => drawMap(ALASKA, "alaska-map"))
+				.then(() => drawMap(HAWAII, "hawaii-map"))
+				.then(() => drawMap(PUERTO_RICO, "puerto-rico-map"));
 		});
 
 		// Define function to create toggle map btns
