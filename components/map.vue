@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<v-row pa-5>
-			<v-col cols="2">	
+			<v-col cols="3">	
 				<v-card outlined class="menu">
 					<div class="card-title">Adjust Years of Interest</div>
 					<v-row class="pa-3" style="text-align: center">
@@ -61,7 +61,7 @@
 					</div>
 				</v-card>
 			</v-col>
-			<v-col style="text-align: center" id="d3-map" cols="7">
+			<v-col style="text-align: center" id="d3-map" cols="6">
 				<v-container class="container" id="map-container">
 					<load-spinner v-if="false" />
 					<v-col id="incomes" class="map">
@@ -97,10 +97,10 @@
 				</v-container>
 			</v-col>
 			<load-spinner v-if="false" />
-			<v-col id="graph"></v-col>
-			<v-col>
-				<div id="tooltip"></div>
-			</v-col>
+			<v-col id="graph" cols="3"></v-col>
+		</v-row>
+		<v-row>
+			<div id="tooltip"></div>
 		</v-row>
 	</div>
 </template>
@@ -217,7 +217,7 @@ export default defineComponent({
 		});
 
 		onMounted(() => {
-			drawGraph("0500000US25001")
+			drawGraph("0500000US25001");
 
 			Promise.resolve()
 				.then(() => drawMap(US_STATES, "main-map"))
@@ -989,14 +989,24 @@ export default defineComponent({
 
 		function drawGraph(geo_id) {
 		// set the dimensions and margins of the graph
-		var margin = {top: 10, right: 30, bottom: 30, left: 60},
-			width = 600 - margin.left - margin.right,
-			height = 400 - margin.top - margin.bottom;
+		var width = document.getElementById("graph").clientWidth;
+		var height = document.getElementById("graph").clientHeight;
+
+		console.log(height);
+		console.log(width);
+		
+		var margin = {top: 10, right: 30, bottom: 30, left: 60};
+			//width = width - margin.left - margin.right,
+			//height = height - margin.top - margin.bottom;
+		
 
 		// append the svg object to the body of the page
 		var svg = d3.select("#graph")
 			.append("svg")
-			.attr("viewBox", '0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}')
+			.attr("width", width)
+			.attr("height", height)
+			.attr("viewBox", "0 0 $${width + margin.left + margin.right} ${height + margin.top + margin.bottom}")
+			.style("background-color", "white")
 			.append("g")
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
