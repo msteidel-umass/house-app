@@ -61,7 +61,7 @@
 					</div>
 				</v-card>
 			</v-col>
-			<v-col style="text-align: center" id="d3-map" cols="8">
+			<v-col style="text-align: center" id="d3-map" cols="7">
 				<v-container class="container" id="map-container">
 					<load-spinner v-if="false" />
 					<v-col id="incomes" class="map">
@@ -97,6 +97,7 @@
 				</v-container>
 			</v-col>
 			<load-spinner v-if="false" />
+			<v-col id="graph"></v-col>
 			<v-col>
 				<div id="tooltip"></div>
 			</v-col>
@@ -216,6 +217,8 @@ export default defineComponent({
 		});
 
 		onMounted(() => {
+			drawGraph("0500000US25001")
+
 			Promise.resolve()
 				.then(() => drawMap(US_STATES, "main-map"))
 				.then(() => drawMap(ALASKA, "alaska-map"))
@@ -984,11 +987,60 @@ export default defineComponent({
 			});
 		}
 
-		function drawGraphs() {
+		function drawGraph(geo_id) {
+		// set the dimensions and margins of the graph
+		var margin = {top: 10, right: 30, bottom: 30, left: 60},
+			width = 600 - margin.left - margin.right,
+			height = 400 - margin.top - margin.bottom;
 
+		// append the svg object to the body of the page
+		var svg = d3.select("#graph")
+			.append("svg")
+			.attr("viewBox", '0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}')
+			.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		//Read the data
+		d3.csv(HOME_VALS).then(function(data) {
+
+			// format variables
+			data.forEach(function(d) {
+			d.date = d3.timeParse("%Y")(d["Year"]);
+			d.value = +d[geo_id];
+			});
+
+			// Add X axis --> it is a date format
+			var x = d3.scaleTime()
+				.domain(d3.extent(data, function(d) { return d.date; }))
+				.range([ 0, width ]);
+			
+			svg.append("g")
+				.attr("transform", "translate(0," + height + ")")
+				.call(d3.axisBottom(x));
+
+			// Add Y axis
+			var y = d3.scaleLinear()
+				.domain([0, d3.max(data, function(d) { return d.value; })])
+				.range([ height, 0 ]);
+			
+			svg.append("g")
+				.call(d3.axisLeft(y));
+
+			// Add the line
+			svg.append("path")
+				.datum(data)
+				.attr("fill", "none")
+				.attr("stroke", "steelblue")
+				.attr("stroke-width", 1.5)
+				.attr("d", d3.line()
+					.x(function(d) { return x(d.date) })
+					.y(function(d) { return y(d.value) })
+				)
+			});
 		}
+
 		return {
-			drawGraphs,
+			drawGraph,
 			drawMap,
 			toggleMap,
 			showHideSpinner,
