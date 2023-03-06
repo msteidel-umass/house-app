@@ -15,7 +15,5 @@ export default defineComponent({
 </script>
 
 <template>
-<v-card>
 	<Map />
-</v-card>
 </template>
