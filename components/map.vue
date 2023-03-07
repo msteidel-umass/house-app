@@ -218,6 +218,7 @@ export default defineComponent({
 
 		onMounted(() => {
 			drawGraph("0500000US25001");
+			drawLegend();
 
 			Promise.resolve()
 				.then(() => drawMap(US_STATES, "main-map"))
@@ -262,8 +263,7 @@ export default defineComponent({
 			}
 			// Function call to switch the styling of active toggle button
 			styleActiveToggleBtn();
-			updateLegend();
-			//console.log(activeMap);
+			//updateLegend();
 		}
 
 		// Change the styling of toggle buttons, depending on active/inactive status
@@ -281,26 +281,25 @@ export default defineComponent({
 		}
 
 		// Update legend content after toggle for each "map" page
-		function updateLegend() {
-			var title = "";
-			var attr1 = "";
-			var attr2 = "";
-			if (activeMap == MAP_DIVS[0].id) {
-				title = "% Change in Median Home Values";
-				attr1 = "Home Value Decrease";
-				attr2 = "Home Value Increase";
-			} else if (activeMap == MAP_DIVS[1].id) {
-				title = "% Change in Median Income";
-				attr1 = "Income Decrease";
-				attr2 = "Income Increase";
-			} else if (activeMap == MAP_DIVS[2].id) {
-				title = "% Market Inflation";
-				attr1 = "Market Over-valued";
-				attr2 = "Market Under-valued";
-			}
+		function drawLegend() {
+			const data = d3.range(-5, 6);
+			const colorScale = d3.scaleSequential(d3.interpolateRdBu).domain([-5, 5]);
+			const container = d3.select('#legend');
 
-			document.getElementById("legend").innerHTML =
-				'<p id="a1">' + attr1 + "</p>" + '<p id="a2">' + attr2 + "</p>";
+			// Create SVG container
+			const svg = container.append('svg')
+				.attr('width', 400)
+				.attr('height', 50);
+
+			const rects = svg.selectAll('rect')
+				.data(data)
+				.enter()
+				.append('rect')
+				.attr('x', (_, i) => (i * 35)) // positioning the left edge of each rectangle
+				.attr('y', 0)
+				.attr('width', 35) // decreasing the width to fit all rectangles in the container
+				.attr('height', 21.5)
+				.attr('fill', d => colorScale(d));
 		}
 		// Define function to create a range slider input for user to select start/end dates
 		function dualSliderInput(div, min, max, changeYears) {
@@ -988,64 +987,64 @@ export default defineComponent({
 		}
 
 		function drawGraph(geo_id) {
-		// set the dimensions and margins of the graph
-		var width = document.getElementById("graph").clientWidth;
-		var height = document.getElementById("graph").clientHeight;
+			// set the dimensions and margins of the graph
+			var width = document.getElementById("graph").clientWidth;
+			var height = document.getElementById("graph").clientHeight;
 
-		console.log(height);
-		console.log(width);
-		
-		var margin = {top: 10, right: 30, bottom: 30, left: 60};
+			console.log(height);
+			console.log(width);
+			
+			var margin = {top: 10, right: 30, bottom: 30, left: 60};
 			//width = width - margin.left - margin.right,
 			//height = height - margin.top - margin.bottom;
 		
 
-		// append the svg object to the body of the page
-		var svg = d3.select("#graph")
-			.append("svg")
-			.attr("width", width)
-			.attr("height", height)
-			.attr("viewBox", "0 0 $${width + margin.left + margin.right} ${height + margin.top + margin.bottom}")
-			.style("background-color", "white")
-			.append("g")
-			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			// append the svg object to the body of the page
+			var svg = d3.select("#graph")
+				.append("svg")
+				.attr("width", width)
+				.attr("height", height)
+				.attr("viewBox", "0 0 $${width + margin.left + margin.right} ${height + margin.top + margin.bottom}")
+				.style("background-color", "white")
+				.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		//Read the data
-		d3.csv(HOME_VALS).then(function(data) {
+			//Read the data
+			d3.csv(HOME_VALS).then(function(data) {
 
-			// format variables
-			data.forEach(function(d) {
-			d.date = d3.timeParse("%Y")(d["Year"]);
-			d.value = +d[geo_id];
-			});
+				// format variables
+				data.forEach(function(d) {
+					d.date = d3.timeParse("%Y")(d["Year"]);
+					d.value = +d[geo_id];
+				});
 
-			// Add X axis --> it is a date format
-			var x = d3.scaleTime()
-				.domain(d3.extent(data, function(d) { return d.date; }))
-				.range([ 0, width ]);
+				// Add X axis --> it is a date format
+				var x = d3.scaleTime()
+					.domain(d3.extent(data, function(d) { return d.date; }))
+					.range([ 0, width ]);
 			
-			svg.append("g")
-				.attr("transform", "translate(0," + height + ")")
-				.call(d3.axisBottom(x));
+				svg.append("g")
+					.attr("transform", "translate(0," + height + ")")
+					.call(d3.axisBottom(x));
 
-			// Add Y axis
-			var y = d3.scaleLinear()
-				.domain([0, d3.max(data, function(d) { return d.value; })])
-				.range([ height, 0 ]);
-			
-			svg.append("g")
-				.call(d3.axisLeft(y));
+				// Add Y axis
+				var y = d3.scaleLinear()
+					.domain([0, d3.max(data, function(d) { return d.value; })])
+					.range([ height, 0 ]);
+				
+				svg.append("g")
+					.call(d3.axisLeft(y));
 
-			// Add the line
-			svg.append("path")
-				.datum(data)
-				.attr("fill", "none")
-				.attr("stroke", "steelblue")
-				.attr("stroke-width", 1.5)
-				.attr("d", d3.line()
-					.x(function(d) { return x(d.date) })
-					.y(function(d) { return y(d.value) })
-				)
+				// Add the line
+				svg.append("path")
+					.datum(data)
+					.attr("fill", "none")
+					.attr("stroke", "steelblue")
+					.attr("stroke-width", 1.5)
+					.attr("d", d3.line()
+						.x(function(d) { return x(d.date) })
+						.y(function(d) { return y(d.value) })
+					)
 			});
 		}
 
@@ -1066,7 +1065,7 @@ export default defineComponent({
 			setSliderDates,
 			createToggleBtn,
 			styleActiveToggleBtn,
-			updateLegend,
+			drawLegend,
 			homeValues,
 			activeMap,
 		};
