@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<v-row pa-5>
+		<v-row class="pa-5">
 			<v-col cols="3">	
 				<v-card outlined class="menu">
 					<div class="card-title">Adjust Years of Interest</div>
@@ -525,7 +525,9 @@ export default defineComponent({
 			// D3 coloring interpolation using previously defined coloring scale - uses D3 Red-to-Blue coloring Scheme
 			var colorInterpolator = d3.interpolateRdBu;
 			// Color (fill) the map
-			d3.selectAll("#" + activeMap + " path").attr("fill", (d) => {
+			d3.selectAll("#" + activeMap + " path")
+			.attr("id", "mapPath")
+			.attr("fill", (d) => {
 				for (var key in rateData) {
 					if (d.properties["GEO_ID"] == key) {
 						//console.log(d.properties["NAME"] + ": " + rateData[key]);
@@ -751,211 +753,211 @@ export default defineComponent({
 					.on("click", (m, d) => {
 						switch(d.properties["NAME"]) {
 							case "Alabama":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(AL_COUNTIES, "main-map");
 								break;
 							case "Alaska":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(AK_COUNTIES, "main-map");
 								break;
 							case "Arkansas":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(AR_COUNTIES, "main-map");
 								break;
 							case "Arizona":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(AZ_COUNTIES, "main-map");
 								break;
 							case "California":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(CA_COUNTIES, "main-map");
 								break;
 							case "Colorado":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(CO_COUNTIES, "main-map");
 								break;
 							case "Connecticut":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(CT_COUNTIES, "main-map");
 								break;
 							case "Delaware":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(DE_COUNTIES, "main-map");
 								break;
 							case "District of Columbia":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(DC, "main-map");
 								break;
 							case "Florida":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(FL_COUNTIES, "main-map");
 								break;
 							case "Georgia":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(GA_COUNTIES, "main-map");
 								break;
 							case "Hawaii":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(HI_COUNTIES, "main-map");
 								break;
 							case "Idaho":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(ID_COUNTIES, "main-map");
 								break;
 							case "Illinois":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(IL_COUNTIES, "main-map");
 								break;
 							case "Indiana":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(IN_COUNTIES, "main-map");
 								break;
 							case "Iowa":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(IA_COUNTIES, "main-map");
 								break;
 							case "Kansas":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(KS_COUNTIES, "main-map");
 								break;
 							case "Kentucky":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(KY_COUNTIES, "main-map");
 								break;
 							case "Louisiana":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(LA_COUNTIES, "main-map");
 								break;
 							case "Maine":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(ME_COUNTIES, "main-map");
 								break;
 							case "Maryland":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(MD_COUNTIES, "main-map");
 								break;
 							case "Massachusetts":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(MA_COUNTIES, "main-map");
 								break;
 							case "Michigan":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(MI_COUNTIES, "main-map");
 								break;
 							case "Minnesota":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(MN_COUNTIES, "main-map");
 								break;
 							case "Mississippi":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(MS_COUNTIES, "main-map");
 								break;
 							case "Missouri":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(MO_COUNTIES, "main-map");
 								break;
 							case "Montana":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(MT_COUNTIES, "main-map");
 								break;
 							case "Nebraska":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(NE_COUNTIES, "main-map");
 								break;
 							case "Nevada":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(NV_COUNTIES, "main-map");
 								break;
 							case "New Hampshire":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(NH_COUNTIES, "main-map");
 								break;
 							case "New Jersey":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(NJ_COUNTIES, "main-map");
 								break;
 							case "New Mexico":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(NM_COUNTIES, "main-map");
 								break;
 							case "New York":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(NY_COUNTIES, "main-map");
 								break;
 							case "North Carolina":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(NC_COUNTIES, "main-map");
 								break;
 							case "North Dakota":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(ND_COUNTIES, "main-map");
 								break;
 							case "Ohio":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(OH_COUNTIES, "main-map");
 								break;
 							case "Oklahoma":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(OK_COUNTIES, "main-map");
 								break;
 							case "Oregon":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(OR_COUNTIES, "main-map");
 								break;
 							case "Pennsylvania":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(PA_COUNTIES, "main-map");
 								break;
 							case "Puerto Rico":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(PR_COUNTIES, "main-map");
 								break;
 							case "Rhode Island":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(RI_COUNTIES, "main-map");
 								break;
 							case "South Carolina":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(SC_COUNTIES, "main-map");
 								break;
 							case "South Dakota":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(SD_COUNTIES, "main-map");
 								break;
 							case "Tennessee":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(TN_COUNTIES, "main-map");
 								break;
 							case "Texas":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(TX_COUNTIES, "main-map");
 								break;
 							case "Utah":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(UT_COUNTIES, "main-map");
 								break;
 							case "Vermont":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(VT_COUNTIES, "main-map");
 								break;
 							case "Virginia":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(VA_COUNTIES, "main-map");
 								break;
 							case "Washington":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(WA_COUNTIES, "main-map");
 								break;
 							case "West Virginia":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(WV_COUNTIES, "main-map");
 								break;
 							case "Wisconsin":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(WI_COUNTIES, "main-map");
 								break;
 							case "Wyoming":
-								d3.selectAll("svg").remove();
+								d3.select("#map-container").selectAll("svg").remove();
 								drawMap(WY_COUNTIES, "main-map");
 								break;
 							default:
@@ -1126,13 +1128,13 @@ body {
 
 /*---D3:SVG STYLING---*/
 /*-------------------------------*/
-div path {
+#mapPath {
 	stroke-width: 0.3px;
 	stroke: black;
 	/* fill: none; --THIS WILL OVERRIDE D3 SVG "fill" ATTR COLORING*/
 }
 
-div path:hover {
+#mapPath:hover {
 	fill-opacity: 0.8;
 	stroke-width: 2.5px;
 	stroke: white;
