@@ -209,7 +209,7 @@ export default defineComponent({
 		var combinedRates = {};
 		// D3 coloring interpolation using previously defined coloring scale - uses D3 Red-to-Blue coloring Scheme
 		var colorInterpolator = d3.interpolateRdBu;
-
+		// 
 		//Loading screen
 		let showSpinner = ref(true);
 		let showHideSpinner = computed(() => {
@@ -365,18 +365,18 @@ export default defineComponent({
 			updateTextBox(s1.value, s2.value);
 		}
 
+		// Passes slider values as arguments to slider controlSlider func
+		// to force-reset it with new values
+		function setSliderDates(start, end) {
+			controlSlider(start, end);
+		}
+
 		// Updates the date slider's text boxes with their respective input values
 		function updateTextBox(value1, value2) {
 			let textBox1 = document.getElementById("t1");
 			let textBox2 = document.getElementById("t2");
 			textBox1.innerHTML = value1;
 			textBox2.innerHTML = value2;
-		}
-
-		// Passes slider values as arguments to slider controlSlider func
-		// to force-reset it with new values
-		function setSliderDates(start, end) {
-			controlSlider(start, end);
 		}
 
 		// Tool tip html.  Contains different HTML layout depending on
@@ -530,7 +530,6 @@ export default defineComponent({
 			.attr("fill", (d) => {
 				for (var key in rateData) {
 					if (d.properties["GEO_ID"] == key) {
-						console.log(rateData[key]);
 						return colorInterpolator((rateData[key]+100)/200);
 					}
 				}
@@ -652,7 +651,8 @@ export default defineComponent({
 			//turn off loading animation
 			showSpinner.value = false;
 		}
-			//Function Draws d3-map
+
+		//Function Draws d3-map
 		function drawMap(inputGeoJson, divId) {
 			// Define window dim vars
 
@@ -988,6 +988,7 @@ export default defineComponent({
 			});
 		}
 
+		// This function draws a graph 
 		function drawGraph(geo_id) {
 			// set the dimensions and margins of the graph
 			var width = document.getElementById("graph").clientWidth - 25;
@@ -1030,6 +1031,14 @@ export default defineComponent({
 					.selectAll("text")
 					.style("color", "black");
 
+				// Add x-axis label
+				svg.append("text")             
+					.attr("transform",
+							"translate(" + (width/2) + " ," + 
+										(height + margin.top + 32) + ")") // slight padding adjustment to make room for text
+					.style("text-anchor", "middle")
+					.style("font-size", "20px")
+					.text("Year");
 				
 				var yMinValue = d3.min(data.map(function (d) { return d.value; }));
 				var yMaxValue = d3.max(data.map(function (d) { return d.value; }));
@@ -1041,7 +1050,7 @@ export default defineComponent({
 					.range([height, 0]);
 
 				svg.append("g")
-					.call(d3.axisLeft(y))
+					.call(d3.axisLeft(y).tickFormat(d3.format('$,.0f')))
 					.selectAll("text")
 					.style("color", "black");
 
