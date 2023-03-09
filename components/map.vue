@@ -530,8 +530,8 @@ export default defineComponent({
 			.attr("fill", (d) => {
 				for (var key in rateData) {
 					if (d.properties["GEO_ID"] == key) {
-						//console.log(d.properties["NAME"] + ": " + rateData[key]);
-						return colorInterpolator(scale(rateData[key]));
+						console.log(rateData[key]);
+						return colorInterpolator((rateData[key]+100)/200);
 					}
 				}
 			});
