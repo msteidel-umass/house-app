@@ -209,8 +209,8 @@ export default defineComponent({
 		var combinedRates = {};
 		// D3 coloring interpolation using previously defined coloring scale - uses D3 Red-to-Blue coloring Scheme
 		var colorInterpolator = d3.interpolateRdBu;
-		// 
-		var sliderLoaded = 0;
+
+		var dateSlider;
 
 		//Loading screen
 		let showSpinner = ref(true);
@@ -222,12 +222,22 @@ export default defineComponent({
 			drawGraph("0500000US25001");
 			drawLegend();
 
+			// Create the date input range-sliders, add event listeners, & associated control-logic
+			dateSlider = dualSliderInput(
+				"control_overlay",
+				2010,
+				2021,
+				dataUpdateHandler
+			);
+
+			dateSlider[0].addEventListener("input", controlSlider);
+			dateSlider[1].addEventListener("input", controlSlider);
+
 			Promise.resolve()
 				.then(() => drawMap(US_STATES, "main-map"))
 				.then(() => drawMap(ALASKA, "alaska-map"))
 				.then(() => drawMap(HAWAII, "hawaii-map"))
-				.then(() => drawMap(PUERTO_RICO, "puerto-rico-map"))
-				.then(() => toggleMap(MAP_DIVS[0].id));
+				.then(() => drawMap(PUERTO_RICO, "puerto-rico-map"));
 		});
 
 		// Define function to create toggle map btns
@@ -266,7 +276,6 @@ export default defineComponent({
 			}
 			// Function call to switch the styling of active toggle button
 			styleActiveToggleBtn();
-			//updateLegend();
 		}
 
 		// Change the styling of toggle buttons, depending on active/inactive status
@@ -966,21 +975,6 @@ export default defineComponent({
 							default:
 						}
 					})
-
-				if(!sliderLoaded) {
-					// Create the date input range-sliders, add event listeners, & associated control-logic
-					let dateSlider = dualSliderInput(
-						"control_overlay",
-						2010,
-						2021,
-						dataUpdateHandler
-					);
-
-					dateSlider[0].addEventListener("input", controlSlider);
-					dateSlider[1].addEventListener("input", controlSlider);
-
-					sliderLoaded = 1;
-				}
 
 				// INIT THE PAGE:
 				// Inits the web-page upon its initial load w/default (hard-coded) date values
