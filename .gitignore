@@ -90,3 +90,7 @@ sw.*
 
 # editorconfig
 .editorconfig
+
+
+# Visual Studio Code Settings
+.vscode
