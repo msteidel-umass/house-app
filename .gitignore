@@ -94,3 +94,4 @@ sw.*
 
 # Visual Studio Code Settings
 .vscode
+.vscode/settings.json
