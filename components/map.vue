@@ -196,7 +196,7 @@ export default defineComponent({
 		var combinedStartYear = null;
 		var combinedEndYear = null;
 		// Init vars to keep track of the actively displayed div (SVG) and corresponding map data
-		var activeMap = null;
+		window.activeMap = null;
 		var activeRateData = {};
 		// Dics to hold median home value and median income value data
 		let homeValues = {};
@@ -259,19 +259,19 @@ export default defineComponent({
 				document.getElementById(MAP_DIVS[0].id).style.display = "initial";
 				document.getElementById(MAP_DIVS[1].id).style.display = "none";
 				document.getElementById(MAP_DIVS[2].id).style.display = "none";
-				activeMap = MAP_DIVS[0].id;
+				window.activeMap = MAP_DIVS[0].id;
 				setSliderDates(incomeStartYear, incomeEndYear);
 			} else if (divName == MAP_DIVS[1].id && activeMap != MAP_DIVS[1].id) {
 				document.getElementById(MAP_DIVS[0].id).style.display = "none";
 				document.getElementById(MAP_DIVS[1].id).style.display = "initial";
 				document.getElementById(MAP_DIVS[2].id).style.display = "none";
-				activeMap = MAP_DIVS[1].id;
+				window.activeMap = MAP_DIVS[1].id;
 				setSliderDates(valueStartYear, valueEndYear);
 			} else if (divName == MAP_DIVS[2].id && activeMap != MAP_DIVS[2].id) {
 				document.getElementById(MAP_DIVS[0].id).style.display = "none";
 				document.getElementById(MAP_DIVS[1].id).style.display = "none";
 				document.getElementById(MAP_DIVS[2].id).style.display = "initial";
-				activeMap = MAP_DIVS[2].id;
+				window.activeMap = MAP_DIVS[2].id;
 				setSliderDates(combinedStartYear, combinedEndYear);
 			}
 			// Function call to switch the styling of active toggle button
