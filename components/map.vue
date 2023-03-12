@@ -260,13 +260,13 @@ export default defineComponent({
 				document.getElementById(MAP_DIVS[1].id).style.display = "none";
 				document.getElementById(MAP_DIVS[2].id).style.display = "none";
 				activeMap = MAP_DIVS[0].id;
-				setSliderDates(valueStartYear, valueEndYear);
+				setSliderDates(incomeStartYear, incomeEndYear);
 			} else if (divName == MAP_DIVS[1].id && activeMap != MAP_DIVS[1].id) {
 				document.getElementById(MAP_DIVS[0].id).style.display = "none";
 				document.getElementById(MAP_DIVS[1].id).style.display = "initial";
 				document.getElementById(MAP_DIVS[2].id).style.display = "none";
 				activeMap = MAP_DIVS[1].id;
-				setSliderDates(incomeStartYear, incomeEndYear);
+				setSliderDates(valueStartYear, valueEndYear);
 			} else if (divName == MAP_DIVS[2].id && activeMap != MAP_DIVS[2].id) {
 				document.getElementById(MAP_DIVS[0].id).style.display = "none";
 				document.getElementById(MAP_DIVS[1].id).style.display = "none";
@@ -426,14 +426,6 @@ export default defineComponent({
 				}
 			});
 			if (activeMap == MAP_DIVS[0].id) {
-				rateProperty = "Change in Median Home Value:";
-				numProperty = "Median Home Value:";
-				startYear = valueStartYear;
-				endYear = valueEndYear;
-				activeRateData = medianValueRates;
-				startValue = homeValueStart_d[d.properties.GEO_ID];
-				endValue = homeValueEnd_d[d.properties.GEO_ID];
-			} else if (activeMap == MAP_DIVS[1].id) {
 				rateProperty = "Change in Median Income:";
 				numProperty = "Median Income:";
 				startYear = incomeStartYear;
@@ -441,6 +433,14 @@ export default defineComponent({
 				activeRateData = medianIncomeRates;
 				startValue = incomeValueStart_d[d.properties.GEO_ID];
 				endValue = incomeValueEnd_d[d.properties.GEO_ID];
+			} else if (activeMap == MAP_DIVS[1].id) {
+				rateProperty = "Change in Median Home Value:";
+				numProperty = "Median Home Value:";
+				startYear = valueStartYear;
+				endYear = valueEndYear;
+				activeRateData = medianValueRates;
+				startValue = homeValueStart_d[d.properties.GEO_ID];
+				endValue = homeValueEnd_d[d.properties.GEO_ID];
 			} else if (
 				activeMap == MAP_DIVS[2].id &&
 				combinedStartYear != combinedEndYear
@@ -645,15 +645,15 @@ export default defineComponent({
 		// call to updateMap.  It reads/writes to globally-scoped vars in index.html
 		function dataUpdateHandler(start, end) {
 			if (activeMap == MAP_DIVS[0].id) {
-				valueStartYear = start;
-				valueEndYear = end;
-				medianValueRates = calcValueRates(start, end, homeValues);
-				updateMap(medianValueRates);
-			} else if (activeMap == MAP_DIVS[1].id) {
 				incomeStartYear = start;
 				incomeEndYear = end;
 				medianIncomeRates = calcIncomeRates(start, end, incomeValues);
 				updateMap(medianIncomeRates);
+			} else if (activeMap == MAP_DIVS[1].id) {
+				valueStartYear = start;
+				valueEndYear = end;
+				medianValueRates = calcValueRates(start, end, homeValues);
+				updateMap(medianValueRates);
 			} else if (activeMap == MAP_DIVS[2].id) {
 				combinedStartYear = start;
 				combinedEndYear = end;
@@ -679,17 +679,17 @@ export default defineComponent({
 			//Load the data as a Promise
 			Promise.all([
 				d3.json(inputGeoJson),
-				d3.csv(HOME_VALS),
 				d3.csv(INCOMES),
+				d3.csv(HOME_VALS),
 			]).then((data) => {
 				// Init vars with data
 				geoJsonCounties = data[0];
-				homeValues = data[1];
-				incomeValues = data[2];
+				incomeValues = data[1];
+				homeValues = data[2];
 				// Initialize each dict with every county's FIPS No., to be used as an index
 				for (var key in homeValues[0]) {
-					medianValueRates[key] = null;
 					medianIncomeRates[key] = null;
+					medianValueRates[key] = null;
 					combinedRates[key] = null;
 				}
 
